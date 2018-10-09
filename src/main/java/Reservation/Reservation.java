@@ -10,7 +10,7 @@ public class Reservation {
     private LocalDateTime start;
     private LocalDateTime end;
 
-    private Reservation(Room room, User user,LocalDateTime start,LocalDateTime end) {
+    private Reservation(User user,LocalDateTime start,LocalDateTime end) {
         this.user = user;
         this.start = start;
         this.end = end;

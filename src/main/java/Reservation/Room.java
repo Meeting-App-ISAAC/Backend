@@ -24,6 +24,19 @@ public class Room {
         this.reservations = reservations;
     }
 
+    public void addReservation(Reservation reservation){
+        for (Reservation reservationCheck : reservations){
+            if (reservation.getStart().isAfter(reservationCheck.getEnd()) && reservation.getEnd().isBefore(reservationCheck.getStart())){
+                reservations.add(reservation);
+                break;
+            }
+        }
+    }
+
+    public void removeReservation(Reservation reservation){
+        reservations.remove(reservation);
+    }
+
     public Boolean isOccupied(LocalDateTime time) {
         boolean reservationFound = false;
         for (Reservation r : this.reservations) {
