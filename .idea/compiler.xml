@@ -7,10 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="MeetingAppBackend" />
+        <module name="MeetingRoom-Backend" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="MeetingAppBackend" target="1.8" />
+      <module name="MeetingAppBackend" target="1.10" />
     </bytecodeTargetLevel>
   </component>
 </project>

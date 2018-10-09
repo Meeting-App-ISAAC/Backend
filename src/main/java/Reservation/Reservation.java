@@ -4,25 +4,16 @@ import java.time.LocalDateTime;
 
 public class Reservation {
 
-    private Room room;
     private User user;
+    private Boolean hasStarted;
 
     private LocalDateTime start;
     private LocalDateTime end;
 
     private Reservation(Room room, User user,LocalDateTime start,LocalDateTime end) {
-        this.room = room;
         this.user = user;
         this.start = start;
         this.end = end;
-    }
-
-    public Room getRoom() {
-        return room;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
     }
 
     public User getUser() {
@@ -47,5 +38,13 @@ public class Reservation {
 
     public void setEnd(LocalDateTime end) {
         this.end = end;
+    }
+
+    public Boolean getHasStarted() {
+        return hasStarted;
+    }
+
+    public void setHasStarted(Boolean hasStarted) {
+        this.hasStarted = hasStarted;
     }
 }
