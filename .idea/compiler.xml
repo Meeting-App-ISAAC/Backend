@@ -9,5 +9,8 @@
         <module name="MeetingAppBackend" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="MeetingAppBackend" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
