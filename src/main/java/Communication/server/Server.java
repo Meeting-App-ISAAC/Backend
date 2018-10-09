@@ -1,8 +1,11 @@
 package Communication.server;
 
+import Communication.server.restserver.ReservationService;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
+import org.glassfish.jersey.servlet.ServletContainer;
 
 import javax.websocket.server.ServerContainer;
 
@@ -20,6 +23,13 @@ public class Server
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         server.setHandler(context);
+
+        ServletHolder jerseyServlet =
+                context.addServlet(ServletContainer.class, "/api/*");
+        jerseyServlet.setInitOrder(0);
+        // Tells the Jersey Servlet which REST service/class to load.
+        jerseyServlet.setInitParameter("jersey.config.server.provider.classnames",
+                ReservationService.class.getCanonicalName());
 
         try
         {
