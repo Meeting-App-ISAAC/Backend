@@ -1,6 +1,6 @@
 package Communication.server.restserver.responseModels;
 
-public class ReservationStartResponse {
+public class ReservationMeetingResponse {
 
     int roomId;
     int reservationId;

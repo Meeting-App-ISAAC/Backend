@@ -12,5 +12,7 @@ public interface Calender {
      */
     public void createNewEvent(Reservation reservation);
 
+    public void endEvent(Reservation reservation);
+
     public List<Reservation.Room> getRooms();
 }

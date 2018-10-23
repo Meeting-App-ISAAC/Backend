@@ -1,7 +1,5 @@
 package Reservation;
 
-import javafx.beans.Observable;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
