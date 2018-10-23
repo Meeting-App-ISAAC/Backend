@@ -17,7 +17,7 @@ public class DummyCalender implements Calender {
 
     @Override
     public void updateEvent(Reservation reservation){
-        System.out.println(reservation.getId());
+        System.out.println(reservation.getEnd());
     }
 
     @Override
@@ -27,8 +27,9 @@ public class DummyCalender implements Calender {
         room.setId(1);
         User user = new User();
         user.setName("Alex");
-        Reservation reservation = new Reservation(user, LocalDateTime.now(), LocalDateTime.of(1999,9, 15,16,0));
+        Reservation reservation = new Reservation(user, LocalDateTime.now().plusMinutes(1), LocalDateTime.now().plusMinutes(2));
         reservation.setId(1);
+        reservation.setHasStarted(true);
         ArrayList<Reservation> reservations = new ArrayList<Reservation>();
         reservations.add(reservation);
         room.setReservations(reservations);
