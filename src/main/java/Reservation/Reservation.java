@@ -1,9 +1,11 @@
 package Reservation;
 
 import java.time.LocalDateTime;
+import java.util.Observable;
 
-public class Reservation {
+public class Reservation extends Observable {
 
+    private int id;
     private User user;
     private Boolean hasStarted;
 
@@ -14,6 +16,14 @@ public class Reservation {
         this.user = user;
         this.start = start;
         this.end = end;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public User getUser() {

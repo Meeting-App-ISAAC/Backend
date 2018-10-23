@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class Room extends java.util.Observable{
 
+    private int id;
     private String name;
     private ArrayList<Reservation> reservations;
 
@@ -16,6 +17,14 @@ public class Room extends java.util.Observable{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public ArrayList<Reservation> getReservations() {
