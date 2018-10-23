@@ -3,12 +3,14 @@ package Communication.server;
 import CalendarResource.Calender;
 import CalendarResource.DummyCalender;
 import Reservation.Reservation;
+import Reservation.Room;
 import Reservation.RoomCollection;
 import Reservation.RoomMemory;
 import com.google.gson.Gson;
 import shared.EncapsulatingMessageGenerator;
 import shared.IEncapsulatingMessageGenerator;
 import shared.messages.EncapsulatingMessage;
+import shared.messages.ReservationsRequest;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
@@ -47,9 +49,9 @@ public class WebSocket implements IWebSocket{
     @OnMessage
     public void onWebSocketText(String message, Session session)
     {
-        String sessionId = session.getId();
-        EncapsulatingMessage encapMsg = gson.fromJson(message,EncapsulatingMessage.class);
-        messageToObjectServer.processMessage(sessionId ,encapMsg.getMessageType(),encapMsg.getMessageData());
+        ReservationsRequest roomId = gson.fromJson(message, ReservationsRequest.class);
+        Room room = rooms.getRoom(roomId.getRoomId());
+        sendToClient(session,gson.toJson(room.getReservations()));
     }
 
     public void sendTo(String sessionId, Object object)

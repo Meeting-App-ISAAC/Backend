@@ -1,9 +1,16 @@
 package Communication.server;
 
+import Communication.ReservationProvider;
+import Reservation.RoomCollection;
+import Reservation.Room;
 import com.google.gson.Gson;
+import shared.messages.ReservationsRequest;
 
 public class MessageToObjectServer {
+
     Gson gson = new Gson();
+    RoomCollection roomCollection = ReservationProvider.getInstance().getCollection();
+    MessageSender messageSender = new MessageSender();
 
     public void processMessage(String sessionId, String type, String data) {
         //Get the last part from the full package and type name
@@ -11,6 +18,10 @@ public class MessageToObjectServer {
 
         switch(simpleType)
         {
+            case "ReservationsRequest":
+                ReservationsRequest request = gson.fromJson(data,ReservationsRequest.class);
+                Room room = roomCollection.getRoom(request.getRoomId());
+                messageSender.sendTo(sessionId,room.getReservations());
             default:
         }
     }

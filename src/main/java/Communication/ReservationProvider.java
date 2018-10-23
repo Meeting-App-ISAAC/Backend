@@ -10,7 +10,6 @@ public class ReservationProvider {
     private RoomCollection collection;
     private static ReservationProvider reservationProvider = new ReservationProvider();
 
-
     public static ReservationProvider getInstance(){
         return reservationProvider;
     }
