@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface RoomCollection {
 
-    public void getRoom(int room);
+    public Room getRoom(int room);
 
     public List<Room> getAllRooms();
 }
