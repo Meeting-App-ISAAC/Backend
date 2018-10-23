@@ -2,6 +2,8 @@ package Communication.server;
 
 import CalendarResource.Calender;
 import CalendarResource.DummyCalender;
+import Communication.ReservationProvider;
+import Communication.server.models.ReservationJavaScript;
 import Reservation.Room;
 import Reservation.RoomCollection;
 import Reservation.RoomMemory;
@@ -30,9 +32,7 @@ public class WebSocket implements IWebSocket{
     public WebSocket() {
         messageGenerator = new EncapsulatingMessageGenerator();
         messageToObjectServer = new MessageToObjectServer();
-
-        calender = new DummyCalender();
-        rooms = new RoomMemory(calender);
+        rooms = ReservationProvider.getInstance().getCollection();
     }
 
     @OnOpen
@@ -48,7 +48,7 @@ public class WebSocket implements IWebSocket{
     {
         ReservationsRequest roomId = gson.fromJson(message, ReservationsRequest.class);
         Room room = rooms.getRoom(roomId.getRoomId());
-        sendToClient(session,gson.toJson(room.getReservations()));
+        sendToClient(session,gson.toJson(ReservationJavaScript.Convert( room.getReservations())));
     }
 
     public void sendTo(String sessionId, Object object)
