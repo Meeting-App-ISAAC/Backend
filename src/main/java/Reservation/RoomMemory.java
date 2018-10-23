@@ -31,12 +31,17 @@ public class RoomMemory implements RoomCollection, Observer {
     }
 
     @Override
-    public List<Reservation> getAllReservations() {
-        return null;
-    }
-
-    @Override
     public void update(Observable o, Object arg) {
+       Room changed = (Room) o;
+        ChangedObject changedObject = (ChangedObject) arg;
 
+       switch(changedObject.getChanged()) {
+           case StoppedMeeting: calender.updateEvent((Reservation) changedObject.getArg());
+                                break;
+
+           case StartedMeeting: calender.updateEvent((Reservation) changedObject.getArg());
+                                break;
+           case AddedReservation: calender.createNewEvent((Reservation) changedObject.getArg());
+       }
     }
 }

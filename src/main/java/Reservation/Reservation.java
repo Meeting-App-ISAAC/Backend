@@ -9,6 +9,7 @@ public class Reservation extends Observable {
     private User user;
     private Boolean hasStarted;
 
+
     private LocalDateTime start;
     private LocalDateTime end;
 
@@ -56,5 +57,15 @@ public class Reservation extends Observable {
 
     public void setHasStarted(Boolean hasStarted) {
         this.hasStarted = hasStarted;
+
+    }
+
+    public void Changed(Changed changed){
+        ChangedObject obj = new ChangedObject();
+        obj.setChanged(changed);
+        obj.setArg(this);
+
+        setChanged();
+        notifyObservers(obj);
     }
 }

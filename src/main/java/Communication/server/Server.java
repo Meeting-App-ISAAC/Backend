@@ -9,8 +9,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 import javax.websocket.server.ServerContainer;
 
-public class Server
-{
+public class Server {
     public static void main(String[] args)
     {
         org.eclipse.jetty.server.Server server = new org.eclipse.jetty.server.Server();

@@ -15,8 +15,7 @@ public class DummyCalender implements Calender {
     }
 
     @Override
-    public void endEvent(Reservation reservation){
-        reservation.setEnd(LocalDateTime.now());
+    public void updateEvent(Reservation reservation){
     }
 
     @Override

@@ -11,8 +11,6 @@ public interface RoomCollection {
      */
     Room getRoom(int room);
 
-    public List<Reservation> getAllReservations();
-
     /***
      * Get a list of all rooms
      */

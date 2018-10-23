@@ -5,6 +5,7 @@ import CalendarResource.DummyCalender;
 import Communication.ReservationProvider;
 import Communication.server.restserver.response.Status;
 import Communication.server.restserver.responseModels.ReservationMeetingResponse;
+import Reservation.Changed;
 import Reservation.Reservation;
 import Reservation.RoomCollection;
 import com.google.gson.Gson;
@@ -14,6 +15,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Path("/reservation")
@@ -34,6 +36,7 @@ public class ReservationService {
         for (Reservation reservation : reservations){
             if (reservation.getId() == reservationStartResponse.getReservationId()){
                 reservation.setHasStarted(true);
+                reservation.Changed(Changed.StartedMeeting);
             }
         }
         reply = new Reply(Status.OK, true);
@@ -54,7 +57,8 @@ public class ReservationService {
         for (Reservation reservation : reservations){
             if (reservation.getId() == reservationStartResponse.getReservationId() && reservation.getHasStarted()){
                 reservation.setHasStarted(false);
-                calender.endEvent(reservation);
+                reservation.setEnd(LocalDateTime.now());
+                reservation.Changed(Changed.StoppedMeeting);
                 reply = new Reply(Status.OK, true);
             } else {
                 reply = new Reply(Status.OK, false);

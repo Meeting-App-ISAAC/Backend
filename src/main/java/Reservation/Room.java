@@ -37,6 +37,7 @@ public class Room extends java.util.Observable{
         for (Reservation reservationCheck : reservations){
             if (reservation.getStart().isAfter(reservationCheck.getEnd()) && reservation.getEnd().isBefore(reservationCheck.getStart())){
                 reservations.add(reservation);
+
                 break;
             }
         }
@@ -54,6 +55,15 @@ public class Room extends java.util.Observable{
             }
         }
         return reservationFound;
+    }
+
+    public void roomChanged(Changed changed){
+        ChangedObject roomObj = new ChangedObject();
+        roomObj.setChanged(changed);
+        roomObj.setArg(this);
+        System.out.println(changed);
+        setChanged();
+        notifyObservers(roomObj);
     }
 
 }
