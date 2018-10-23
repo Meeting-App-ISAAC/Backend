@@ -1,9 +1,11 @@
 package Reservation;
 
+import javafx.beans.Observable;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class Room {
+public class Room extends java.util.Observable{
 
     private String name;
     private ArrayList<Reservation> reservations;

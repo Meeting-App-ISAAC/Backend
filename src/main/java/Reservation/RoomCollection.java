@@ -5,7 +5,14 @@ import java.util.List;
 
 public interface RoomCollection {
 
-    public void getRoom(int room);
+    /***
+     * Gets one specific room
+     * @param room room number
+     */
+    Room getRoom(int room);
 
-    public List<Room> getAllRooms();
+    /***
+     * Get a list of all rooms
+     */
+    List<Room> getAllRooms();
 }
