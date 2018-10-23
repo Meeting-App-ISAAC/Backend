@@ -21,7 +21,7 @@ class RoomMemoryTest {
     RoomMemory roomMemory = null;
 
     @BeforeEach
-    void setup(){
+    void setUp(){
         List<Reservation> reservations = new ArrayList<>();
 
         room1.setId(1);

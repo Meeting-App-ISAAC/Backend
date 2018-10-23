@@ -2,6 +2,7 @@ package Reservation;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Room extends java.util.Observable{
 
@@ -33,13 +34,20 @@ public class Room extends java.util.Observable{
         this.reservations = reservations;
     }
 
-    public void addReservation(Reservation reservation){
+    public boolean addReservation(Reservation reservation){
+        List<Reservation> reservationschecksize = new ArrayList<>();
+
         for (Reservation reservationCheck : reservations){
             if (reservation.getStart().isAfter(reservationCheck.getEnd()) && reservation.getEnd().isBefore(reservationCheck.getStart())){
-                reservations.add(reservation);
-
-                break;
+                reservationschecksize.add(reservationCheck);
             }
+        }
+        if (reservationschecksize.size() == reservations.size()){
+            reservations.add(reservation);
+            return true;
+        }
+        else {
+            return false;
         }
     }
 
