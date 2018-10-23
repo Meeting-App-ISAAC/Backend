@@ -15,8 +15,8 @@ public class RoomMemory implements RoomCollection {
     }
 
     @Override
-    public void getRoom(int room) {
-
+    public Room getRoom(int room) {
+        return  null;
     }
 
     @Override

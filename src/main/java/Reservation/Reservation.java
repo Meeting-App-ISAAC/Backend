@@ -1,8 +1,9 @@
 package Reservation;
 
 import java.time.LocalDateTime;
+import java.util.Observable;
 
-public class Reservation {
+public class Reservation extends Observable {
 
     private User user;
     private Boolean hasStarted;
