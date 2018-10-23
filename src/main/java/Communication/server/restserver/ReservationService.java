@@ -23,7 +23,7 @@ public class ReservationService {
         ReservationStartResponse reservation = gson.fromJson(data, ReservationStartResponse.class);
         ReservationProvider reservationProvider = ReservationProvider.getInstance();
         RoomCollection collection = reservationProvider.getCollection();
-        collection.getRoom(0).getReservations();
+        collection.getRoom(reservation.getRoomId()).getReservations() ;
 
         return Response.status(reply.getStatus().getCode())
                 .entity(reply.getMessage()).build();
