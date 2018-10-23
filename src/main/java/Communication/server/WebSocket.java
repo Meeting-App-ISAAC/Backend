@@ -1,7 +1,10 @@
 package Communication.server;
 
+import CalendarResource.Calender;
+import CalendarResource.DummyCalender;
 import Reservation.Reservation;
 import Reservation.RoomCollection;
+import Reservation.RoomMemory;
 import com.google.gson.Gson;
 import shared.EncapsulatingMessageGenerator;
 import shared.IEncapsulatingMessageGenerator;
@@ -21,12 +24,16 @@ public class WebSocket implements IWebSocket{
     private MessageToObjectServer messageToObjectServer;
     private IEncapsulatingMessageGenerator messageGenerator;
 
+    private Calender calender;
     private RoomCollection rooms;
 
 
     public WebSocket() {
         messageGenerator = new EncapsulatingMessageGenerator();
         messageToObjectServer = new MessageToObjectServer();
+
+        calender = new DummyCalender();
+        rooms = new RoomMemory(calender);
     }
 
     @OnOpen
@@ -34,9 +41,7 @@ public class WebSocket implements IWebSocket{
     {
         System.out.println("Socket Connected: " + session);
         sessions.add(session);
-        //Get all reservations for front end
-        //@Todo to be implemented in Websockets
-        ArrayList<Reservation> allReservations;
+        
     }
 
     @OnMessage
