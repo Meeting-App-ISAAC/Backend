@@ -14,7 +14,6 @@ public class RoomListener implements Observer {
 
     public RoomListener(Session session) {
         this.session = session;
-        this.room.addObserver(this);
     }
 
     public Room getRoom() {
@@ -23,6 +22,7 @@ public class RoomListener implements Observer {
 
     public void setRoom(Room room) {
         this.room = room;
+        this.room.addObserver(this);
     }
 
     public Session getSession() {
