@@ -31,6 +31,11 @@ public class RoomMemory implements RoomCollection, Observer {
     }
 
     @Override
+    public List<Reservation> getAllReservations() {
+        return null;
+    }
+
+    @Override
     public void update(Observable o, Object arg) {
 
     }
