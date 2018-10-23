@@ -5,6 +5,7 @@ import java.util.Observable;
 
 public class Reservation extends Observable {
 
+    private int id;
     private User user;
     private Boolean hasStarted;
 
@@ -15,6 +16,14 @@ public class Reservation extends Observable {
         this.user = user;
         this.start = start;
         this.end = end;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public User getUser() {

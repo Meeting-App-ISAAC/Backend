@@ -8,4 +8,7 @@ public interface RoomCollection {
     public Room getRoom(int room);
 
     public List<Room> getAllRooms();
+
+    public List<Reservation> getAllReservations();
+
 }

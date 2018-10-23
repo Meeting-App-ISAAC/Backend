@@ -1,5 +1,7 @@
 package Communication.server;
 
+import Reservation.Reservation;
+import Reservation.RoomCollection;
 import com.google.gson.Gson;
 import shared.EncapsulatingMessageGenerator;
 import shared.IEncapsulatingMessageGenerator;
@@ -9,6 +11,7 @@ import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @ClientEndpoint
 @ServerEndpoint(value="/reservation/")
@@ -17,6 +20,9 @@ public class WebSocket implements IWebSocket{
     private Gson gson = new Gson();
     private MessageToObjectServer messageToObjectServer;
     private IEncapsulatingMessageGenerator messageGenerator;
+
+    private RoomCollection rooms;
+
 
     public WebSocket() {
         messageGenerator = new EncapsulatingMessageGenerator();
@@ -28,7 +34,9 @@ public class WebSocket implements IWebSocket{
     {
         System.out.println("Socket Connected: " + session);
         sessions.add(session);
-
+        //Get all reservations for front end
+        //@Todo to be implemented in Websockets
+        ArrayList<Reservation> allReservations;
     }
 
     @OnMessage
