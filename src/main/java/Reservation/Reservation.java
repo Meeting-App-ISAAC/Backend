@@ -13,7 +13,7 @@ public class Reservation extends Observable {
     private LocalDateTime start;
     private LocalDateTime end;
 
-    private Reservation(User user,LocalDateTime start,LocalDateTime end) {
+    public Reservation(User user,LocalDateTime start,LocalDateTime end) {
         this.user = user;
         this.start = start;
         this.end = end;

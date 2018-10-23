@@ -22,7 +22,12 @@ public class RoomMemory implements RoomCollection, Observer {
 
     @Override
     public Room getRoom(int room) {
-        return rooms.get(room);
+        for (Room roomToFind : getAllRooms()){
+            if (room ==  roomToFind.getId()){
+                return roomToFind;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -36,12 +41,14 @@ public class RoomMemory implements RoomCollection, Observer {
         ChangedObject changedObject = (ChangedObject) arg;
 
        switch(changedObject.getChanged()) {
-           case StoppedMeeting: calender.updateEvent((Reservation) changedObject.getArg());
-                                break;
+           case StoppedMeeting:     calender.updateEvent((Reservation) changedObject.getArg());
+                                    break;
 
-           case StartedMeeting: calender.updateEvent((Reservation) changedObject.getArg());
-                                break;
-           case AddedReservation: calender.createNewEvent((Reservation) changedObject.getArg());
+           case StartedMeeting:     calender.updateEvent((Reservation) changedObject.getArg());
+                                    break;
+
+           case AddedReservation:   calender.createNewEvent((Reservation) changedObject.getArg());
+                                    break;
        }
     }
 }

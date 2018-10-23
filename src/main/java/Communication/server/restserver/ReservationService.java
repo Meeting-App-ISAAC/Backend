@@ -34,12 +34,15 @@ public class ReservationService {
         ArrayList<Reservation> reservations = collection.getRoom(reservationStartResponse.getRoomId()).getReservations();
 
         for (Reservation reservation : reservations){
-            if (reservation.getId() == reservationStartResponse.getReservationId()){
+            if (reservation.getId() == reservationStartResponse.getReservationId()) {
                 reservation.setHasStarted(true);
                 reservation.Changed(Changed.StartedMeeting);
+                reply = new Reply(Status.OK, true);
+                return Response.status(reply.getStatus().getCode())
+                        .entity(reply.getMessage()).build();
             }
         }
-        reply = new Reply(Status.OK, true);
+        reply = new Reply(Status.ERROR, false);
         return Response.status(reply.getStatus().getCode())
                 .entity(reply.getMessage()).build();
     }

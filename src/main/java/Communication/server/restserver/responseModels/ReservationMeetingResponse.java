@@ -2,8 +2,8 @@ package Communication.server.restserver.responseModels;
 
 public class ReservationMeetingResponse {
 
-    int roomId;
-    int reservationId;
+    private int roomId;
+    private int reservationId;
 
     public int getRoomId() {
         return roomId;
