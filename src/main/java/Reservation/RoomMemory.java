@@ -22,7 +22,12 @@ public class RoomMemory implements RoomCollection, Observer {
 
     @Override
     public Room getRoom(int room) {
-        return rooms.get(room);
+        for (Room room1: rooms){
+            if (room1.getId() == room){
+                return room1;
+            }
+        }
+        return null;
     }
 
     @Override
