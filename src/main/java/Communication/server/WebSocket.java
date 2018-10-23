@@ -2,26 +2,23 @@ package Communication.server;
 
 import CalendarResource.Calender;
 import CalendarResource.DummyCalender;
-import Reservation.Reservation;
 import Reservation.Room;
 import Reservation.RoomCollection;
 import Reservation.RoomMemory;
 import com.google.gson.Gson;
 import shared.EncapsulatingMessageGenerator;
 import shared.IEncapsulatingMessageGenerator;
-import shared.messages.EncapsulatingMessage;
 import shared.messages.ReservationsRequest;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 @ClientEndpoint
 @ServerEndpoint(value="/reservation/")
 public class WebSocket implements IWebSocket{
-    private static ArrayList<Session> sessions = new ArrayList<>();
+    private static ArrayList<RoomListener> listener = new ArrayList<>();
     private Gson gson = new Gson();
     private MessageToObjectServer messageToObjectServer;
     private IEncapsulatingMessageGenerator messageGenerator;
@@ -42,8 +39,8 @@ public class WebSocket implements IWebSocket{
     public void onWebSocketConnect(Session session)
     {
         System.out.println("Socket Connected: " + session);
-        sessions.add(session);
-        
+
+        RoomListener roomListener = new RoomListener(session);
     }
 
     @OnMessage
@@ -62,10 +59,10 @@ public class WebSocket implements IWebSocket{
 
     public Session getSessionFromId(String sessionId)
     {
-        for(Session s : sessions)
+        for(RoomListener r : listener)
         {
-            if(s.getId().equals(sessionId))
-                return s;
+            if(r.getSession().getId().equals(sessionId))
+                return r.getSession();
         }
         return null;
     }
@@ -73,8 +70,8 @@ public class WebSocket implements IWebSocket{
 
     public void broadcast(Object object)
     {
-        for(Session session : sessions) {
-            sendTo(session.getId(), object);
+        for(RoomListener r : listener) {
+            sendTo(r.getSession().getId(), object);
         }
     }
 

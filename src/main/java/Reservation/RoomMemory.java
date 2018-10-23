@@ -42,6 +42,7 @@ public class RoomMemory implements RoomCollection, Observer {
 
        switch(changedObject.getChanged()) {
            case StoppedMeeting:     calender.updateEvent((Reservation) changedObject.getArg());
+
                                     break;
 
            case StartedMeeting:     calender.updateEvent((Reservation) changedObject.getArg());
