@@ -18,11 +18,10 @@ import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-@Path("/reservation")
+@Path("/api")
 public class ReservationService {
 
     Gson gson = new Gson();
-    Calender calender = new DummyCalender();
 
     @POST @Consumes("application/json")
     @Path("/start")

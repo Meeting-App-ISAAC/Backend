@@ -2,26 +2,25 @@ package Communication.server;
 
 import CalendarResource.Calender;
 import CalendarResource.DummyCalender;
-import Reservation.Reservation;
+import Communication.ReservationProvider;
+import Communication.server.models.ReservationJavaScript;
 import Reservation.Room;
 import Reservation.RoomCollection;
 import Reservation.RoomMemory;
 import com.google.gson.Gson;
 import shared.EncapsulatingMessageGenerator;
 import shared.IEncapsulatingMessageGenerator;
-import shared.messages.EncapsulatingMessage;
 import shared.messages.ReservationsRequest;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 @ClientEndpoint
 @ServerEndpoint(value="/reservation/")
 public class WebSocket implements IWebSocket{
-    private static ArrayList<Session> sessions = new ArrayList<>();
+    private static ArrayList<RoomListener> listener = new ArrayList<>();
     private Gson gson = new Gson();
     private MessageToObjectServer messageToObjectServer;
     private IEncapsulatingMessageGenerator messageGenerator;
@@ -33,17 +32,15 @@ public class WebSocket implements IWebSocket{
     public WebSocket() {
         messageGenerator = new EncapsulatingMessageGenerator();
         messageToObjectServer = new MessageToObjectServer();
-
-        calender = new DummyCalender();
-        rooms = new RoomMemory(calender);
+        rooms = ReservationProvider.getInstance().getCollection();
     }
 
     @OnOpen
     public void onWebSocketConnect(Session session)
     {
         System.out.println("Socket Connected: " + session);
-        sessions.add(session);
-        
+
+        listener.add(new RoomListener(session));
     }
 
     @OnMessage
@@ -51,7 +48,19 @@ public class WebSocket implements IWebSocket{
     {
         ReservationsRequest roomId = gson.fromJson(message, ReservationsRequest.class);
         Room room = rooms.getRoom(roomId.getRoomId());
-        sendToClient(session,gson.toJson(room.getReservations()));
+        addRoomToListener(session, room);
+
+        sendToClient(session,gson.toJson(ReservationJavaScript.Convert( room.getReservations())));
+    }
+
+
+    private void addRoomToListener(Session session, Room room) {
+        for (RoomListener roomListener : listener) {
+            if(roomListener.getSession().equals(session)){
+                roomListener.setRoom(room);
+                return;
+            }
+        }
     }
 
     public void sendTo(String sessionId, Object object)
@@ -62,10 +71,10 @@ public class WebSocket implements IWebSocket{
 
     public Session getSessionFromId(String sessionId)
     {
-        for(Session s : sessions)
+        for(RoomListener r : listener)
         {
-            if(s.getId().equals(sessionId))
-                return s;
+            if(r.getSession().getId().equals(sessionId))
+                return r.getSession();
         }
         return null;
     }
@@ -73,8 +82,8 @@ public class WebSocket implements IWebSocket{
 
     public void broadcast(Object object)
     {
-        for(Session session : sessions) {
-            sendTo(session.getId(), object);
+        for(RoomListener r : listener) {
+            sendTo(r.getSession().getId(), object);
         }
     }
 

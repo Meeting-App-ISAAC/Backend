@@ -27,7 +27,7 @@ public class DummyCalender implements Calender {
         room.setId(1);
         User user = new User();
         user.setName("Alex");
-        Reservation reservation = new Reservation(user, LocalDateTime.now(), LocalDateTime.of(1999,9, 15,16,0));
+        Reservation reservation = new Reservation(user, LocalDateTime.now().withSecond(0).plusMinutes(-2), LocalDateTime.now().withSecond(0).plusMinutes(60));
         reservation.setId(1);
         reservation.setHasStarted(true);
         ArrayList<Reservation> reservations = new ArrayList<Reservation>();
