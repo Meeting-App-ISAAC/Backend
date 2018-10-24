@@ -38,7 +38,8 @@ public class ReservationService {
                 reservation.Changed(Changed.StartedMeeting);
                 reply = new Reply(Status.OK, true);
                 return Response.status(reply.getStatus().getCode())
-                        .entity(reply.getMessage()).build();
+                        .entity(reply.getMessage()).header("Access-Control-Allow-Origin", "*")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT").build();
             }
         }
         reply = new Reply(Status.ERROR, false);
@@ -67,6 +68,7 @@ public class ReservationService {
             }
         }
         return Response.status(reply.getStatus().getCode())
-                .entity(reply.getMessage()).build();
+                .entity(reply.getMessage()).header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT").build();
     }
 }
