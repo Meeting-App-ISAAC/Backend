@@ -1,5 +1,6 @@
 package Communication.server;
 
+import Communication.server.models.ReservationJavaScript;
 import Reservation.Room;
 import javax.websocket.Session;
 import java.util.Observable;
@@ -35,6 +36,6 @@ public class RoomListener implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        messageSender.sendTo(this.session.getId(),this.room);
+        this.messageSender.sendReservationDump(this.session, this.room.getReservations());
     }
 }

@@ -40,7 +40,7 @@ public class WebSocket implements IWebSocket{
     {
         System.out.println("Socket Connected: " + session);
 
-        RoomListener roomListener = new RoomListener(session);
+        listener.add(new RoomListener(session));
     }
 
     @OnMessage
@@ -48,7 +48,19 @@ public class WebSocket implements IWebSocket{
     {
         ReservationsRequest roomId = gson.fromJson(message, ReservationsRequest.class);
         Room room = rooms.getRoom(roomId.getRoomId());
+        addRoomToListener(session, room);
+
         sendToClient(session,gson.toJson(ReservationJavaScript.Convert( room.getReservations())));
+    }
+
+
+    private void addRoomToListener(Session session, Room room) {
+        for (RoomListener roomListener : listener) {
+            if(roomListener.getSession().equals(session)){
+                roomListener.setRoom(room);
+                return;
+            }
+        }
     }
 
     public void sendTo(String sessionId, Object object)
