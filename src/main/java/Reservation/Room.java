@@ -2,8 +2,12 @@ package Reservation;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+<<<<<<< HEAD
+import java.util.List;
+=======
 import java.util.Observable;
 import java.util.Observer;
+>>>>>>> b62ba034625128d1cef71b8d7adfd792273591be
 
 public class Room extends java.util.Observable implements Observer {
 
@@ -37,6 +41,14 @@ public class Room extends java.util.Observable implements Observer {
         }
     }
 
+<<<<<<< HEAD
+    public boolean addReservation(Reservation reservation){
+        List<Reservation> reservationschecksize = new ArrayList<>();
+
+        for (Reservation reservationCheck : reservations){
+            if (reservation.getStart().isAfter(reservationCheck.getEnd()) && reservation.getEnd().isBefore(reservationCheck.getStart())){
+                reservationschecksize.add(reservationCheck);
+=======
     public void addReservation(Reservation reservation){
         if(reservations.size() == 0){
             reservations.add(reservation);
@@ -48,7 +60,15 @@ public class Room extends java.util.Observable implements Observer {
                 reservations.add(reservation);
                 reservation.addObserver(this);
                 break;
+>>>>>>> b62ba034625128d1cef71b8d7adfd792273591be
             }
+        }
+        if (reservationschecksize.size() == reservations.size()){
+            reservations.add(reservation);
+            return true;
+        }
+        else {
+            return false;
         }
     }
 
