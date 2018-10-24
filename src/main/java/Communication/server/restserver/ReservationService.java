@@ -44,7 +44,8 @@ public class ReservationService {
         }
         reply = new Reply(Status.ERROR, false);
         return Response.status(reply.getStatus().getCode())
-                .entity(reply.getMessage()).build();
+                .entity(reply.getMessage()).header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT").build();
     }
 
     @POST @Consumes("application/json")
