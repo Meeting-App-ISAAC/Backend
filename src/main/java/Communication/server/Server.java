@@ -1,6 +1,7 @@
 package Communication.server;
 
 import Communication.server.restserver.ReservationService;
+import Settings.SettingsHandler;
 import com.google.gson.Gson;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -12,6 +13,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 import javax.servlet.DispatcherType;
 import javax.websocket.server.ServerContainer;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.Timer;
@@ -19,8 +21,17 @@ import java.util.Timer;
 public class Server {
     public static void main(String[] args)
     {
-        Timer timer = new Timer();
-        timer.schedule(new ReservationTimer(),0,60000);
+        boolean timerEnabled = true;
+        try {
+            timerEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_TIMEOUT_ENABLED"));
+        }
+        catch (IOException e) {
+            System.out.println("[error] Could not get properties file");
+        }
+        if (timerEnabled) {
+            Timer timer = new Timer();
+            timer.schedule(new ReservationTimer(), 0, 60000);
+        }
 
         org.eclipse.jetty.server.Server server = new org.eclipse.jetty.server.Server();
         ServerConnector connector = new ServerConnector(server);
