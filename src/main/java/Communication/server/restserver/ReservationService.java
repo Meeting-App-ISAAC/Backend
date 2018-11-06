@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import Communication.server.restserver.response.Reply;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -114,11 +115,12 @@ public class ReservationService {
             }
         }
 
-        User user = new User(1, "Yorick");
-        Reservation reservation = new Reservation(reservationsSize + 1, userCollection.getUserById(reservationCreateResponse.getUserId()), false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration()));
+
+        User user = userCollection.getUserById(reservationCreateResponse.getUserId());
+        Reservation reservation = new Reservation(reservationsSize + 1, user, false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration()));
         collection.getRoom(reservationCreateResponse.getRoomId()).addReservation(reservation);
             if (!overlap.CheckOverlap(reservationsSize + 1, collection.getRoom(reservationCreateResponse.getRoomId()).getId())) {
-                reservation.Changed(Changed.StartedMeeting);
+                reservation.Changed(Changed.AddedReservation);
 
                 reply = new Reply(Status.OK, true);
                 return Response.status(reply.getStatus().getCode())
@@ -130,4 +132,18 @@ public class ReservationService {
         return Response.status(reply.getStatus().getCode())
                 .entity(reply.getMessage()).build();
     }
+
+    @GET
+    @Path("/users")
+    public Response getUsers() {
+        Reply reply = null;
+        Gson gson = new Gson();
+        ReservationProvider reservationProvider = ReservationProvider.getInstance();
+        UserCollection userCollection = reservationProvider.getUserCollection();
+
+        reply = new Reply(Status.OK, gson.toJson(userCollection.getUsers()));
+        return Response.status(reply.getStatus().getCode())
+                .entity(reply.getMessage()).build();
+    }
+
 }

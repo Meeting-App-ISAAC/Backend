@@ -1,14 +1,18 @@
 package Reservation;
 
+import CalendarResource.Calender;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserProfiler implements UserCollection {
 
-    private List<User> users;
+    private Calender calender;
+    private List<User> users = new ArrayList<>();
 
-    public UserProfiler(List<User> users){
-        this.users = users;
+    public UserProfiler(Calender calender){
+        this.calender = calender;
+        users = calender.getUsers();
     }
 
     @Override
