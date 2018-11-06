@@ -109,14 +109,15 @@ public class ReservationService {
 
         int reservationsSize = 0;
         for (Room room : collection.getAllRooms()){
-            reservationsSize = room.getReservations().size();
+            if (room.getId() == reservationCreateResponse.getRoomId()) {
+                reservationsSize = room.getReservations().size();
+            }
         }
 
 
         User user = new User(1, "Yorick");
         Reservation reservation = new Reservation(reservationsSize + 1, user, false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration()));
-        reservations.add(reservation);
-        collection.getRoom(reservationCreateResponse.getRoomId()).setReservations(reservations);
+        collection.getRoom(reservationCreateResponse.getRoomId()).addReservation(reservation);
             if (!overlap.CheckOverlap(reservationsSize + 1, collection.getRoom(reservationCreateResponse.getRoomId()).getId())) {
                 reservation.Changed(Changed.StartedMeeting);
 
@@ -124,8 +125,7 @@ public class ReservationService {
                 return Response.status(reply.getStatus().getCode())
                         .entity(reply.getMessage()).build();
             }
-        reservations.remove(reservation);
-        collection.getRoom(reservationCreateResponse.getRoomId()).setReservations(reservations);
+        collection.getRoom(reservationCreateResponse.getRoomId()).removeReservation(reservation);
 
         reply = new Reply(Status.OK, false);
         return Response.status(reply.getStatus().getCode())

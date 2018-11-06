@@ -13,7 +13,7 @@ public class CheckOverlap {
         ArrayList<Reservation> reservations = collection.getRoom(roomId).getReservations();
         Boolean overlap = false;
         for (Reservation reservation : reservations) {
-            if (reservation.getId() == reservationId && reservation.getHasStarted()) {
+            if (reservation.getId() == reservationId) {
 
                 for (int i = 0; i < reservations.size(); i++) {
                     if (!(reservation.getId() == reservations.get(i).getId())) {
