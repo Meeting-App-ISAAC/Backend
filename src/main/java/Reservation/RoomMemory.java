@@ -50,6 +50,9 @@ public class RoomMemory implements RoomCollection, Observer {
 
            case AddedReservation:   calender.createNewEvent((Reservation) changedObject.getArg());
                                     break;
+
+           case ExtendedMeeting:    calender.updateEvent((Reservation) changedObject.getArg());
+                                    break;
        }
     }
 }
