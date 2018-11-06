@@ -106,17 +106,20 @@ public class ReservationService {
         UserCollection userCollection = reservationProvider.getUserCollection();
         ArrayList<Reservation> reservations = collection.getRoom(reservationCreateResponse.getRoomId()).getReservations();
 
-        if (!overlap.CheckOverlap(1, collection.getRoom(reservationCreateResponse.getRoomId()).getId())){
-            User user = new User(1, "Yorick");
-            Reservation reservation = new Reservation(2, user, false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration()));
-            reservations.add(reservation);
-            collection.getRoom(reservationCreateResponse.getRoomId()).setReservations(reservations);
-            reservation.Changed(Changed.StartedMeeting);
 
-            reply = new Reply(Status.OK, true);
-            return Response.status(reply.getStatus().getCode())
-                    .entity(reply.getMessage()).build();
-        }
+        User user = new User(1, "Yorick");
+        Reservation reservation = new Reservation(2, user, false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration()));
+        reservations.add(reservation);
+        collection.getRoom(reservationCreateResponse.getRoomId()).setReservations(reservations);
+            if (!overlap.CheckOverlap(1, collection.getRoom(reservationCreateResponse.getRoomId()).getId())) {
+                reservation.Changed(Changed.StartedMeeting);
+
+                reply = new Reply(Status.OK, true);
+                return Response.status(reply.getStatus().getCode())
+                        .entity(reply.getMessage()).build();
+            }
+        reservations.remove(reservation);
+        collection.getRoom(reservationCreateResponse.getRoomId()).setReservations(reservations);
 
         reply = new Reply(Status.OK, false);
         return Response.status(reply.getStatus().getCode())

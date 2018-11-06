@@ -16,9 +16,8 @@ public class CheckOverlap {
 
                 for (int i = 0; i < reservations.size(); i++) {
                     if (!(reservation.getId() == reservations.get(i).getId())) {
-                        if (reservation.getStart().isBefore(reservations.get(i).getStart()) && reservation.getEnd().isBefore(reservations.get(i).getStart())) {
+                        if (reservation.getStart().isBefore(reservations.get(i).getStart()) && reservation.getStart().isBefore(reservations.get(i).getEnd()) && reservation.getEnd().isBefore(reservations.get(i).getStart())) {
                             overlap = false;
-                            String nodup = "";
                         } else {
                             overlap = true;
                         }
