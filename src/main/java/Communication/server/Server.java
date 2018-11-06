@@ -35,7 +35,13 @@ public class Server {
 
         org.eclipse.jetty.server.Server server = new org.eclipse.jetty.server.Server();
         ServerConnector connector = new ServerConnector(server);
-        connector.setPort(8090);
+        try {
+            connector.setPort(Integer.parseInt(SettingsHandler.getProperty("SERVER_PORT")));
+        }
+        catch (IOException e) {
+            System.out.println("[error] Could not get properties file");
+            connector.setPort(8090);
+        }
         server.addConnector(connector);
 
         Gson gson = new Gson();

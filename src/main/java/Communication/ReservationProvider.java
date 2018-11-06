@@ -20,7 +20,7 @@ public class ReservationProvider {
     private ReservationProvider(){
         Calender calender = new DummyCalender();
         this.collection = new RoomMemory(calender);
-        this.userCollection = new UserProfiler(calender.getUsers());
+        this.userCollection = new UserProfiler(calender);
     }
 
     public RoomCollection getCollection(){
