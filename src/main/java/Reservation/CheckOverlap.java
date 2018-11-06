@@ -17,10 +17,12 @@ public class CheckOverlap {
 
                 for (int i = 0; i < reservations.size(); i++) {
                     if (!(reservation.getId() == reservations.get(i).getId())) {
-                        if (reservation.getStart().isBefore(reservations.get(i).getStart()) && reservation.getStart().isBefore(reservations.get(i).getEnd()) && reservation.getEnd().isBefore(reservations.get(i).getStart())) {
+                        if (reservation.getStart().isBefore(reservations.get(i).getStart()) && reservation.getEnd().isBefore(reservations.get(i).getStart())) {
                             overlap = false;
-                        } else {
-                            overlap = true;
+                        } else if(reservation.getStart().isAfter(reservations.get(i).getEnd())){
+                            overlap = false;
+                        } else{
+                            return true;
                         }
                     }
                 }
@@ -41,15 +43,13 @@ public class CheckOverlap {
                         if (reservation.getStart().isBefore(reservations.get(i).getStart()) && reservation.getEnd().plusMinutes(extensionMinutes).isBefore(reservations.get(i).getStart())) {
                             overlap = false;
                         } else {
-                            overlap = true;
+                            return true;
                         }
 
                     }
                 }
-                if (!overlap) {
-                    reservation.setEnd(reservation.getEnd().plusMinutes(extensionMinutes));
-                    reservation.Changed(changed);
-                }
+                reservation.setEnd(reservation.getEnd().plusMinutes(extensionMinutes));
+                reservation.Changed(changed);
             }
         }
 
