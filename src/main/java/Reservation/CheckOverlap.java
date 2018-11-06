@@ -11,6 +11,7 @@ public class CheckOverlap {
         ReservationProvider reservationProvider = ReservationProvider.getInstance();
         RoomCollection collection = reservationProvider.getCollection();
         ArrayList<Reservation> reservations = collection.getRoom(roomId).getReservations();
+        Boolean overlap = true;
         for (Reservation reservation : reservations) {
             if (reservation.getId() == reservationId && reservation.getHasStarted()) {
 
@@ -18,19 +19,22 @@ public class CheckOverlap {
                     if (!(reservation.getId() == reservations.get(i).getId())) {
                         if (reservation.getStart().isBefore(reservations.get(i).getStart()) && reservation.getStart().isBefore(reservations.get(i).getEnd()) && reservation.getEnd().isBefore(reservations.get(i).getStart())) {
                             reservation.Changed(changed);
-                            return true;
+                            overlap = false;
                         }
+                    } else {
+                        overlap = false;
                     }
                 }
             }
         }
-        return false;
+        return overlap;
     }
 
     public boolean CheckOverlapAddTime(int reservationId, int extensionMinutes, int roomId, Changed changed){
         ReservationProvider reservationProvider = ReservationProvider.getInstance();
         RoomCollection collection = reservationProvider.getCollection();
         ArrayList<Reservation> reservations = collection.getRoom(roomId).getReservations();
+        Boolean overlap = true;
         for (Reservation reservation : reservations) {
             if (reservation.getId() == reservationId && reservation.getHasStarted()) {
                 for (int i = 0; i < reservations.size(); i++) {
@@ -38,14 +42,16 @@ public class CheckOverlap {
                         if (reservation.getStart().isBefore(reservations.get(i).getStart()) && reservation.getStart().isBefore(reservations.get(i).getEnd()) && reservation.getEnd().isBefore(reservations.get(i).getStart())) {
                             reservation.setEnd(LocalDateTime.now().plusMinutes(extensionMinutes));
                             reservation.Changed(changed);
-                            return true;
+                            overlap = false;
 
                         }
+                    } else {
+                        overlap = false;
                     }
                 }
             }
 
         }
-        return false;
+        return overlap;
     }
 }
