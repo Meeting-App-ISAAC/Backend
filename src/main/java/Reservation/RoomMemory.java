@@ -1,7 +1,9 @@
 package Reservation;
 
 import CalendarResource.Calender;
+import Settings.SettingsHandler;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -41,10 +43,14 @@ public class RoomMemory implements RoomCollection, Observer {
         ChangedObject changedObject = (ChangedObject) arg;
 
        switch(changedObject.getChanged()) {
-           case StoppedMeeting:     calender.updateEvent((Reservation) changedObject.getArg());
+           case StoppedMeeting:     if(stopEnabled()) {
+                                    calender.updateEvent((Reservation) changedObject.getArg());
+                                    }
                                     break;
 
-           case StartedMeeting:     calender.updateEvent((Reservation) changedObject.getArg());
+           case StartedMeeting:     if(startEnabled()) {
+                                    calender.updateEvent((Reservation) changedObject.getArg());
+                                    }
                                     break;
 
            case AddedReservation:   calender.createNewEvent((Reservation) changedObject.getArg());
@@ -54,4 +60,25 @@ public class RoomMemory implements RoomCollection, Observer {
                                     break;
        }
     }
+
+    private boolean startEnabled() {
+        try {
+            return Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_START_ENABLED"));
+        }
+        catch (IOException e) {
+            System.out.println("[error] Could net get properties file");
+            return true;
+        }
+    }
+
+    private boolean stopEnabled() {
+        try {
+            return Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_STOP_ENABLED"));
+        }
+        catch (IOException e) {
+            System.out.println("[error] Could net get properties file");
+            return true;
+        }
+    }
+
 }
