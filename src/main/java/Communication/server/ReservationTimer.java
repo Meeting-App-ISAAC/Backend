@@ -5,7 +5,9 @@ import Reservation.Reservation;
 import Reservation.RoomCollection;
 import Reservation.Room;
 import Reservation.Changed;
+import Settings.SettingsHandler;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,12 @@ public class ReservationTimer extends TimerTask {
 
     ReservationTimer() {
         reservations = new ArrayList<Reservation>();
+        try {
+            expiryTime = Long.parseLong(SettingsHandler.getProperty("RESERVATION_TIMEOUT"));
+        }
+        catch (IOException e) {
+            System.out.println("[error] Could not get properties file");
+        }
     }
 
     public void run() {
