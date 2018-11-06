@@ -20,7 +20,9 @@ public class Room extends java.util.Observable implements Observer {
     public Room(int id, String name, ArrayList<Reservation> reservations){
         this.id = id;
         this.name = name;
-        this.reservations = reservations;
+        for (Reservation reservation : reservations){
+            addReservation(reservation);
+        }
     }
 
     public String getName() {

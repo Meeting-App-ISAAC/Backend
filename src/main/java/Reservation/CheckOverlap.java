@@ -32,7 +32,7 @@ public class CheckOverlap {
         ReservationProvider reservationProvider = ReservationProvider.getInstance();
         RoomCollection collection = reservationProvider.getCollection();
         ArrayList<Reservation> reservations = collection.getRoom(roomId).getReservations();
-        Boolean overlap = false;
+        boolean overlap = false;
         for (Reservation reservation : reservations) {
             if (reservation.getId() == reservationId && reservation.getHasStarted()) {
                 for (int i = 0; i < reservations.size(); i++) {
