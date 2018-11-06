@@ -12,6 +12,7 @@ import Reservation.User;
 import Reservation.UserCollection;
 import Reservation.RoomCollection;
 import Reservation.CheckOverlap;
+import Reservation.Room;
 import com.google.gson.Gson;
 import Communication.server.restserver.response.Reply;
 
@@ -106,12 +107,17 @@ public class ReservationService {
         UserCollection userCollection = reservationProvider.getUserCollection();
         ArrayList<Reservation> reservations = collection.getRoom(reservationCreateResponse.getRoomId()).getReservations();
 
+        int reservationsSize = 0;
+        for (Room room : collection.getAllRooms()){
+            reservationsSize = room.getReservations().size();
+        }
+
 
         User user = new User(1, "Yorick");
-        Reservation reservation = new Reservation(2, user, false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration()));
+        Reservation reservation = new Reservation(reservationsSize + 1, user, false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration()));
         reservations.add(reservation);
         collection.getRoom(reservationCreateResponse.getRoomId()).setReservations(reservations);
-            if (!overlap.CheckOverlap(1, collection.getRoom(reservationCreateResponse.getRoomId()).getId())) {
+            if (!overlap.CheckOverlap(reservationsSize + 1, collection.getRoom(reservationCreateResponse.getRoomId()).getId())) {
                 reservation.Changed(Changed.StartedMeeting);
 
                 reply = new Reply(Status.OK, true);

@@ -3,6 +3,7 @@ package Reservation;
 import Communication.ReservationProvider;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class CheckOverlap {
 
