@@ -28,6 +28,6 @@ public class CheckOverlapTest {
     @Test
     void checkoverlap() {
         CheckOverlap checkOverlap = new CheckOverlap();
-        Assert.assertTrue(checkOverlap.CheckOverlap(1, 1, Changed.StartedMeeting));
+        Assert.assertTrue(checkOverlap.CheckOverlap(1, 1));
     }
 }
