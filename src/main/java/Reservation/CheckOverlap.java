@@ -2,7 +2,6 @@ package Reservation;
 
 import Communication.ReservationProvider;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class CheckOverlap {
@@ -25,6 +24,9 @@ public class CheckOverlap {
                         }
                     }
                 }
+                if (!overlap) {
+                    reservation.Changed(changed);
+                }
             }
         }
         return overlap;
@@ -40,8 +42,7 @@ public class CheckOverlap {
                 for (int i = 0; i < reservations.size(); i++) {
                     if (!(reservation.getId() == reservations.get(i).getId())) {
                         if (reservation.getStart().isBefore(reservations.get(i).getStart()) && reservation.getStart().isBefore(reservations.get(i).getEnd()) && reservation.getEnd().isBefore(reservations.get(i).getStart())) {
-                            reservation.setEnd(LocalDateTime.now().plusMinutes(extensionMinutes));
-                            reservation.Changed(changed);
+                            reservation.setEnd(reservation.getEnd().plusMinutes(extensionMinutes));
                             overlap = false;
                         } else {
                             overlap = true;
@@ -49,9 +50,12 @@ public class CheckOverlap {
 
                     }
                 }
+                if (!overlap) {
+                    reservation.Changed(changed);
+                }
             }
-
         }
+
         return overlap;
     }
 }

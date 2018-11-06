@@ -10,8 +10,5 @@
         <module name="MeetingRoom-Backend" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="MeetingAppBackend" target="1.10" />
-    </bytecodeTargetLevel>
   </component>
 </project>
