@@ -2,10 +2,13 @@ package Communication.server.restserver;
 
 import Communication.ReservationProvider;
 import Communication.server.restserver.response.Status;
+import Communication.server.restserver.responseModels.ReservationCreateResponse;
 import Communication.server.restserver.responseModels.ReservationExtendResponse;
 import Communication.server.restserver.responseModels.ReservationMeetingResponse;
 import Reservation.Changed;
 import Reservation.Reservation;
+import Reservation.User;
+import Reservation.UserCollection;
 import Reservation.RoomCollection;
 import Reservation.CheckOverlap;
 import com.google.gson.Gson;
@@ -85,6 +88,25 @@ public class ReservationService {
             return Response.status(reply.getStatus().getCode())
                     .entity(reply.getMessage()).build();
         }
+
+        reply = new Reply(Status.OK, false);
+        return Response.status(reply.getStatus().getCode())
+                .entity(reply.getMessage()).build();
+    }
+
+    @POST @Consumes("application/json")
+    @Path("/create")
+    public Response CreateMeeting(String data) {
+        Reply reply = null;
+
+        ReservationCreateResponse reservationCreateResponse = gson.fromJson(data, ReservationCreateResponse.class);
+        ReservationProvider reservationProvider = ReservationProvider.getInstance();
+        RoomCollection collection = reservationProvider.getCollection();
+        UserCollection userCollection = reservationProvider.getUserCollection();
+        ArrayList<Reservation> reservations = collection.getRoom(reservationCreateResponse.getRoomId()).getReservations();
+
+        User user = userCollection.getUserById(reservationCreateResponse.getUserId());
+        reservations.add(new Reservation(1, user, false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration())));
 
         reply = new Reply(Status.OK, false);
         return Response.status(reply.getStatus().getCode())

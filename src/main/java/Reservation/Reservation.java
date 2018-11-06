@@ -19,6 +19,14 @@ public class Reservation extends Observable {
         this.end = end;
     }
 
+    public Reservation(int id, User user, boolean hasStarted, LocalDateTime start, LocalDateTime end){
+        this.id = id;
+        this.user = user;
+        this.hasStarted = hasStarted;
+        this.start = start;
+        this.end = end;
+    }
+
     public int getId() {
         return id;
     }

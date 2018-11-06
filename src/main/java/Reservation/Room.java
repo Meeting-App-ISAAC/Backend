@@ -13,6 +13,16 @@ public class Room extends java.util.Observable implements Observer {
     private String name;
     private ArrayList<Reservation> reservations = new ArrayList<Reservation>();
 
+    public Room(){
+
+    }
+
+    public Room(int id, String name, ArrayList<Reservation> reservations){
+        this.id = id;
+        this.name = name;
+        this.reservations = reservations;
+    }
+
     public String getName() {
         return name;
     }

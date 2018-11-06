@@ -2,6 +2,7 @@ package CalendarResource;
 
 import Reservation.Reservation;
 import Reservation.Room;
+import Reservation.User;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface Calender {
     public void updateEvent(Reservation reservation);
 
     public List<Room> getRooms();
+
+    List<User> getUsers();
 }

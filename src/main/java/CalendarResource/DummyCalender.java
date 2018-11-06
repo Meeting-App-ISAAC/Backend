@@ -3,6 +3,7 @@ package CalendarResource;
 import Reservation.Reservation;
 import Reservation.Room;
 import Reservation.User;
+import jdk.vm.ci.meta.Local;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,18 +23,25 @@ public class DummyCalender implements Calender {
 
     @Override
     public List<Room> getRooms() {
-        ArrayList<Room> rooms = new ArrayList<Room>();
-        Room room = new Room();
-        room.setId(1);
-        User user = new User();
-        user.setName("Alex");
-        Reservation reservation = new Reservation(user, LocalDateTime.now().withSecond(0).plusMinutes(-2), LocalDateTime.now().withSecond(0).plusMinutes(60));
-        reservation.setId(1);
-        reservation.setHasStarted(true);
+        User user = new User(1, "Alex");
+        Reservation reservation = new Reservation(1, user, true,  LocalDateTime.now().withSecond(0).plusMinutes(-2), LocalDateTime.now().withSecond(0).plusMinutes(60));
         ArrayList<Reservation> reservations = new ArrayList<Reservation>();
         reservations.add(reservation);
-        room.setReservations(reservations);
+        ArrayList<Room> rooms = new ArrayList<Room>();
+        Room room = new Room(1, "DummyRoom", reservations);
         rooms.add(room);
         return rooms;
+    }
+
+    @Override
+    public List<User> getUsers() {
+        List<User> users = new ArrayList<>();
+        users.add(new User(1, "Alex"));
+        users.add(new User(2, "Carlo"));
+        users.add(new User(3, "Joeri"));
+        users.add(new User(4, "Yorick"));
+        users.add(new User(5, "Tobias"));
+
+        return users;
     }
 }
