@@ -83,7 +83,7 @@ public class ReservationService {
 
         ReservationExtendResponse reservationExtendResponse = gson.fromJson(data, ReservationExtendResponse.class);
 
-        if (overlap.CheckOverlapAddTime(reservationExtendResponse.getReservationId(), reservationExtendResponse.getMinutes(), reservationExtendResponse.getRoomId(), Changed.ExtendedMeeting)){
+        if (!overlap.CheckOverlapAddTime(reservationExtendResponse.getReservationId(), reservationExtendResponse.getMinutes(), reservationExtendResponse.getRoomId(), Changed.ExtendedMeeting)){
             reply = new Reply(Status.OK, true);
             return Response.status(reply.getStatus().getCode())
                     .entity(reply.getMessage()).build();
