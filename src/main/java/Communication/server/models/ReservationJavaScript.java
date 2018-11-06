@@ -10,6 +10,7 @@ public class ReservationJavaScript {
     public String title;
     public double startHour;
     public double length;
+    public boolean hasStarted;
 
     public int getId() {
         return id;
@@ -43,6 +44,14 @@ public class ReservationJavaScript {
         this.length = length;
     }
 
+    public boolean getHasStarted() {
+        return hasStarted;
+    }
+
+    public void setHasStarted(boolean hasStarted) {
+        this.hasStarted = hasStarted;
+    }
+
     public static ArrayList<ReservationJavaScript> Convert(ArrayList<Reservation> reservations) {
         ArrayList<ReservationJavaScript> result = new ArrayList<>();
         for (Reservation reservation : reservations) {
@@ -53,8 +62,8 @@ public class ReservationJavaScript {
                     .toInstant().toEpochMilli() - reservation.getStart().atZone(ZoneId.systemDefault())
                     .toInstant().toEpochMilli()) / 3600) / 1000;
             temp.startHour = (double) reservation.getStart().getHour() + (double) reservation.getStart().getMinute() / 60 + (double) reservation.getStart().getSecond() / 3600;
+            temp.hasStarted = reservation.getHasStarted();
             result.add(temp);
-
         }
         return result;
     }
