@@ -1,6 +1,7 @@
 package Communication.server;
 
 import Communication.server.restserver.ReservationService;
+import com.google.gson.Gson;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -11,6 +12,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 import javax.servlet.DispatcherType;
 import javax.websocket.server.ServerContainer;
+import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.Timer;
 
@@ -24,6 +26,10 @@ public class Server {
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(8090);
         server.addConnector(connector);
+
+        Gson gson = new Gson();
+        String test = gson.toJson(LocalDateTime.now());
+        System.out.println(test);
 
         // Setup the basic application "context" for this application at "/"
         // This is also known as the handler tree (in jetty speak)
