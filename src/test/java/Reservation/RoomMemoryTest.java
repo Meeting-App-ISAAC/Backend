@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.jupiter.api.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -17,12 +18,17 @@ class RoomMemoryTest {
     Room room1 = new Room();
     Room room2 = new Room();
     Room room3 = new Room();
+    List<User> users = new ArrayList<>();
+    User user = new User();
     Calender calender = null;
     RoomMemory roomMemory = null;
 
     @BeforeEach
     void setUp(){
         List<Reservation> reservations = new ArrayList<>();
+        user = new User(1, "TestUser");
+        users.add(user);
+        reservations.add(new Reservation(1, user, false, LocalDateTime.now(), LocalDateTime.now().plusMinutes(5)));
 
         room1.setId(1);
         room1.setName("TestRoom1");
@@ -50,6 +56,9 @@ class RoomMemoryTest {
             public List<Room> getRooms() {
                 return rooms;
             }
+
+            @Override
+            public List<User> getUsers() { return users; }
         };
 
         roomMemory = new RoomMemory(calender);
