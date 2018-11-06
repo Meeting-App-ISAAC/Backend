@@ -11,7 +11,7 @@ public class CheckOverlap {
         ReservationProvider reservationProvider = ReservationProvider.getInstance();
         RoomCollection collection = reservationProvider.getCollection();
         ArrayList<Reservation> reservations = collection.getRoom(roomId).getReservations();
-        Boolean overlap = true;
+        Boolean overlap = false;
         for (Reservation reservation : reservations) {
             if (reservation.getId() == reservationId && reservation.getHasStarted()) {
 
@@ -20,9 +20,9 @@ public class CheckOverlap {
                         if (reservation.getStart().isBefore(reservations.get(i).getStart()) && reservation.getStart().isBefore(reservations.get(i).getEnd()) && reservation.getEnd().isBefore(reservations.get(i).getStart())) {
                             reservation.Changed(changed);
                             overlap = false;
+                        } else {
+                            overlap = true;
                         }
-                    } else {
-                        overlap = false;
                     }
                 }
             }
@@ -34,7 +34,7 @@ public class CheckOverlap {
         ReservationProvider reservationProvider = ReservationProvider.getInstance();
         RoomCollection collection = reservationProvider.getCollection();
         ArrayList<Reservation> reservations = collection.getRoom(roomId).getReservations();
-        Boolean overlap = true;
+        Boolean overlap = false;
         for (Reservation reservation : reservations) {
             if (reservation.getId() == reservationId && reservation.getHasStarted()) {
                 for (int i = 0; i < reservations.size(); i++) {
@@ -43,10 +43,10 @@ public class CheckOverlap {
                             reservation.setEnd(LocalDateTime.now().plusMinutes(extensionMinutes));
                             reservation.Changed(changed);
                             overlap = false;
-
+                        } else {
+                            overlap = true;
                         }
-                    } else {
-                        overlap = false;
+
                     }
                 }
             }
