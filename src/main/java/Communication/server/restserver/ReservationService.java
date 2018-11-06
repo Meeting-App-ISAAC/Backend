@@ -1,5 +1,6 @@
 package Communication.server.restserver;
 
+import CalendarResource.Calender;
 import Communication.ReservationProvider;
 import Communication.server.restserver.response.Status;
 import Communication.server.restserver.responseModels.ReservationCreateResponse;
@@ -105,8 +106,15 @@ public class ReservationService {
         UserCollection userCollection = reservationProvider.getUserCollection();
         ArrayList<Reservation> reservations = collection.getRoom(reservationCreateResponse.getRoomId()).getReservations();
 
-        User user = userCollection.getUserById(reservationCreateResponse.getUserId());
-        reservations.add(new Reservation(1, user, false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration())));
+        if (overlap.CheckOverlap(1, collection.getRoom(reservationCreateResponse.getRoomId()).getId(), Changed.AddedReservation)){
+            User user = userCollection.getUserById(reservationCreateResponse.getUserId());
+            reservations.add(new Reservation(1, user, false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration())));
+            collection.getRoom(reservationCreateResponse.getRoomId()).setReservations(reservations);
+
+            reply = new Reply(Status.OK, true);
+            return Response.status(reply.getStatus().getCode())
+                    .entity(reply.getMessage()).build();
+        }
 
         reply = new Reply(Status.OK, false);
         return Response.status(reply.getStatus().getCode())
