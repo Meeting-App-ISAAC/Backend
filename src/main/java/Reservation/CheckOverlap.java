@@ -1,11 +1,16 @@
 package Reservation;
 
+import Communication.ReservationProvider;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class CheckOverlap {
 
-    public boolean CheckOverlap(ArrayList<Reservation> reservations, int reservationId, Changed changed){
+    public boolean CheckOverlap(int reservationId, int roomId, Changed changed){
+        ReservationProvider reservationProvider = ReservationProvider.getInstance();
+        RoomCollection collection = reservationProvider.getCollection();
+        ArrayList<Reservation> reservations = collection.getRoom(roomId).getReservations();
         for (Reservation reservation : reservations) {
             if (reservation.getId() == reservationId && reservation.getHasStarted()) {
 
@@ -20,7 +25,10 @@ public class CheckOverlap {
         return false;
     }
 
-    public boolean CheckOverlapAddTime(ArrayList<Reservation> reservations, int reservationId, int extensionMinutes, Changed changed){
+    public boolean CheckOverlapAddTime(int reservationId, int extensionMinutes, int roomId, Changed changed){
+        ReservationProvider reservationProvider = ReservationProvider.getInstance();
+        RoomCollection collection = reservationProvider.getCollection();
+        ArrayList<Reservation> reservations = collection.getRoom(roomId).getReservations();
         for (Reservation reservation : reservations) {
             if (reservation.getId() == reservationId && reservation.getHasStarted()) {
 

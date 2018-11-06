@@ -1,7 +1,5 @@
 package Communication.server.restserver;
 
-import CalendarResource.Calender;
-import CalendarResource.DummyCalender;
 import Communication.ReservationProvider;
 import Communication.server.restserver.response.Status;
 import Communication.server.restserver.responseModels.ReservationExtendResponse;
@@ -81,11 +79,8 @@ public class ReservationService {
         Reply reply = null;
 
         ReservationExtendResponse reservationExtendResponse = gson.fromJson(data, ReservationExtendResponse.class);
-        ReservationProvider reservationProvider = ReservationProvider.getInstance();
-        RoomCollection collection = reservationProvider.getCollection();
-        ArrayList<Reservation> reservations = collection.getRoom(reservationExtendResponse.getRoomId()).getReservations();
 
-        if (overlap.CheckOverlapAddTime(reservations, reservationExtendResponse.getReservationId(), reservationExtendResponse.getMinutes(), Changed.ExtendedMeeting)){
+        if (overlap.CheckOverlapAddTime(reservationExtendResponse.getReservationId(), reservationExtendResponse.getMinutes(), reservationExtendResponse.getRoomId(), Changed.ExtendedMeeting)){
             reply = new Reply(Status.OK, true);
             return Response.status(reply.getStatus().getCode())
                     .entity(reply.getMessage()).build();
