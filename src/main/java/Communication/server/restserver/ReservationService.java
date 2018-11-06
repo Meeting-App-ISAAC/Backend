@@ -22,7 +22,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.UUID;
 
 @Path("/api")
 public class ReservationService {
@@ -113,15 +112,20 @@ public class ReservationService {
             reservationsSize = room.getReservations().size();
         }
 
-        if (!overlap.CheckOverlap(reservationsSize + 1, collection.getRoom(reservationCreateResponse.getRoomId()).getId(), Changed.AddedReservation)){
-            User user = userCollection.getUserById(reservationCreateResponse.getUserId());
-            reservations.add(new Reservation(reservationsSize + 1, user, false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration())));
-            collection.getRoom(reservationCreateResponse.getRoomId()).setReservations(reservations);
 
-            reply = new Reply(Status.OK, true);
-            return Response.status(reply.getStatus().getCode())
-                    .entity(reply.getMessage()).build();
-        }
+        User user = new User(1, "Yorick");
+        Reservation reservation = new Reservation(reservationsSize + 1, user, false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration()));
+        reservations.add(reservation);
+        collection.getRoom(reservationCreateResponse.getRoomId()).setReservations(reservations);
+            if (!overlap.CheckOverlap(reservationsSize + 1, collection.getRoom(reservationCreateResponse.getRoomId()).getId())) {
+                reservation.Changed(Changed.StartedMeeting);
+
+                reply = new Reply(Status.OK, true);
+                return Response.status(reply.getStatus().getCode())
+                        .entity(reply.getMessage()).build();
+            }
+        reservations.remove(reservation);
+        collection.getRoom(reservationCreateResponse.getRoomId()).setReservations(reservations);
 
         reply = new Reply(Status.OK, false);
         return Response.status(reply.getStatus().getCode())

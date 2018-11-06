@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class CheckOverlap {
 
-    public boolean CheckOverlap(int reservationId, int roomId, Changed changed){
+    public boolean CheckOverlap(int reservationId, int roomId){
         ReservationProvider reservationProvider = ReservationProvider.getInstance();
         RoomCollection collection = reservationProvider.getCollection();
         ArrayList<Reservation> reservations = collection.getRoom(roomId).getReservations();
@@ -19,7 +19,6 @@ public class CheckOverlap {
                     if (!(reservation.getId() == reservations.get(i).getId())) {
                         if (reservation.getStart().isBefore(reservations.get(i).getStart()) && reservation.getStart().isBefore(reservations.get(i).getEnd()) && reservation.getEnd().isBefore(reservations.get(i).getStart())) {
                             overlap = false;
-                            String nodup = "";
                         } else {
                             overlap = true;
                         }
@@ -39,7 +38,7 @@ public class CheckOverlap {
             if (reservation.getId() == reservationId && reservation.getHasStarted()) {
                 for (int i = 0; i < reservations.size(); i++) {
                     if (!(reservation.getId() == reservations.get(i).getId())) {
-                        if (reservation.getStart().isBefore(reservations.get(i).getStart()) && reservation.getStart().isBefore(reservations.get(i).getEnd()) && reservation.getEnd().isBefore(reservations.get(i).getStart())) {
+                        if (reservation.getStart().isBefore(reservations.get(i).getStart()) && reservation.getEnd().plusMinutes(extensionMinutes).isBefore(reservations.get(i).getStart())) {
                             overlap = false;
                         } else {
                             overlap = true;
