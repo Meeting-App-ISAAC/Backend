@@ -114,9 +114,8 @@ public class ReservationService {
             }
         }
 
-
         User user = new User(1, "Yorick");
-        Reservation reservation = new Reservation(reservationsSize + 1, user, false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration()));
+        Reservation reservation = new Reservation(reservationsSize + 1, userCollection.getUserById(reservationCreateResponse.getUserId()), false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration()));
         collection.getRoom(reservationCreateResponse.getRoomId()).addReservation(reservation);
             if (!overlap.CheckOverlap(reservationsSize + 1, collection.getRoom(reservationCreateResponse.getRoomId()).getId())) {
                 reservation.Changed(Changed.StartedMeeting);
