@@ -2,6 +2,7 @@ package Reservation;
 
 import java.time.LocalDateTime;
 import java.util.Observable;
+import java.util.UUID;
 
 public class Reservation extends Observable {
 

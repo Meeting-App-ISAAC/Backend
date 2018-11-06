@@ -12,6 +12,7 @@ import Reservation.User;
 import Reservation.UserCollection;
 import Reservation.RoomCollection;
 import Reservation.CheckOverlap;
+import Reservation.Room;
 import com.google.gson.Gson;
 import Communication.server.restserver.response.Reply;
 
@@ -21,6 +22,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Path("/api")
 public class ReservationService {
@@ -106,9 +108,14 @@ public class ReservationService {
         UserCollection userCollection = reservationProvider.getUserCollection();
         ArrayList<Reservation> reservations = collection.getRoom(reservationCreateResponse.getRoomId()).getReservations();
 
-        if (!overlap.CheckOverlap(1, collection.getRoom(reservationCreateResponse.getRoomId()).getId(), Changed.AddedReservation)){
+        int reservationsSize = 0;
+        for (Room room : collection.getAllRooms()){
+            reservationsSize = room.getReservations().size();
+        }
+
+        if (!overlap.CheckOverlap(reservationsSize + 1, collection.getRoom(reservationCreateResponse.getRoomId()).getId(), Changed.AddedReservation)){
             User user = userCollection.getUserById(reservationCreateResponse.getUserId());
-            reservations.add(new Reservation(1, user, false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration())));
+            reservations.add(new Reservation(reservationsSize + 1, user, false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration())));
             collection.getRoom(reservationCreateResponse.getRoomId()).setReservations(reservations);
 
             reply = new Reply(Status.OK, true);
