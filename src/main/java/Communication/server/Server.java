@@ -12,10 +12,14 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import javax.servlet.DispatcherType;
 import javax.websocket.server.ServerContainer;
 import java.util.EnumSet;
+import java.util.Timer;
 
 public class Server {
     public static void main(String[] args)
     {
+        Timer timer = new Timer();
+        timer.schedule(new ReservationTimer(),0,60000);
+
         org.eclipse.jetty.server.Server server = new org.eclipse.jetty.server.Server();
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(8090);
