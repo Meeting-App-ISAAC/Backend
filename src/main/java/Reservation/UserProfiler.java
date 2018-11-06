@@ -5,7 +5,7 @@ import java.util.List;
 
 public class UserProfiler implements UserCollection {
 
-    private List<User> users = new ArrayList<>();
+    private List<User> users;
 
     public UserProfiler(List<User> users){
         this.users = users;

@@ -106,7 +106,7 @@ public class ReservationService {
         UserCollection userCollection = reservationProvider.getUserCollection();
         ArrayList<Reservation> reservations = collection.getRoom(reservationCreateResponse.getRoomId()).getReservations();
 
-        if (overlap.CheckOverlap(1, collection.getRoom(reservationCreateResponse.getRoomId()).getId(), Changed.AddedReservation)){
+        if (!overlap.CheckOverlap(1, collection.getRoom(reservationCreateResponse.getRoomId()).getId(), Changed.AddedReservation)){
             User user = userCollection.getUserById(reservationCreateResponse.getUserId());
             reservations.add(new Reservation(1, user, false, reservationCreateResponse.getStart(), reservationCreateResponse.getStart().plusMinutes((long) reservationCreateResponse.getDuration())));
             collection.getRoom(reservationCreateResponse.getRoomId()).setReservations(reservations);
