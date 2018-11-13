@@ -2,6 +2,7 @@ package Communication.server;
 
 import Communication.server.restserver.ReservationService;
 import Settings.SettingsHandler;
+import Settings.SettingsWatcher;
 import com.google.gson.Gson;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -13,6 +14,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 import javax.servlet.DispatcherType;
 import javax.websocket.server.ServerContainer;
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
@@ -21,6 +23,7 @@ import java.util.Timer;
 public class Server {
     public static void main(String[] args)
     {
+        // Reservation timeout
         boolean timerEnabled = true;
         try {
             timerEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_TIMEOUT_ENABLED"));
@@ -31,6 +34,19 @@ public class Server {
         if (timerEnabled) {
             Timer timer = new Timer();
             timer.schedule(new ReservationTimer(), 0, 60000);
+        }
+
+        // Resend settings on change of config file
+        boolean resendOnChange = true;
+        try {
+            resendOnChange = Boolean.parseBoolean(SettingsHandler.getProperty("RESEND_ON_CONFIG_CHANGE"));
+        }
+        catch (IOException e) {
+            System.out.println("[error] Could not get properties file");
+        }
+        if (resendOnChange) {
+            Timer timer = new Timer();
+            timer.schedule(new SettingsWatcher(new File("target/classes/config.properties")),0,1000);
         }
 
         org.eclipse.jetty.server.Server server = new org.eclipse.jetty.server.Server();
