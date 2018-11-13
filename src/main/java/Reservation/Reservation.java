@@ -1,19 +1,38 @@
 package Reservation;
 
 import java.time.LocalDateTime;
+import java.util.Observable;
 
-public class Reservation {
+public class Reservation extends Observable {
 
+    private int id;
     private User user;
     private Boolean hasStarted;
+
 
     private LocalDateTime start;
     private LocalDateTime end;
 
-    private Reservation(Room room, User user,LocalDateTime start,LocalDateTime end) {
+    public Reservation(User user,LocalDateTime start,LocalDateTime end) {
         this.user = user;
         this.start = start;
         this.end = end;
+    }
+
+    public Reservation(int id, User user, boolean hasStarted, LocalDateTime start, LocalDateTime end){
+        this.id = id;
+        this.user = user;
+        this.hasStarted = hasStarted;
+        this.start = start;
+        this.end = end;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public User getUser() {
@@ -46,5 +65,15 @@ public class Reservation {
 
     public void setHasStarted(Boolean hasStarted) {
         this.hasStarted = hasStarted;
+
+    }
+
+    public void Changed(Changed changed){
+        ChangedObject obj = new ChangedObject();
+        obj.setChanged(changed);
+        obj.setArg(this);
+
+        setChanged();
+        notifyObservers(obj);
     }
 }
