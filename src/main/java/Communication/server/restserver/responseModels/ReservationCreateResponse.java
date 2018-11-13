@@ -10,6 +10,8 @@ public class ReservationCreateResponse {
 
     private int duration;
 
+    private LocalDateTime start;
+
     public int getRoomId() {
         return roomId;
     }
@@ -32,5 +34,13 @@ public class ReservationCreateResponse {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public LocalDateTime getStart() {
+        return start;
+    }
+
+    public void setStart(LocalDateTime start) {
+        this.start = start;
     }
 }
