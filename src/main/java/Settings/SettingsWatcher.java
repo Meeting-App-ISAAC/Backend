@@ -24,6 +24,7 @@ public class SettingsWatcher extends TimerTask {
     }
 
     private void onChange(File file) {
+        // TODO: send settings to frontend
         System.out.println("[info] Config has changed");
     }
 
