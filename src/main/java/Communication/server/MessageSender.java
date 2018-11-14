@@ -1,8 +1,11 @@
 package Communication.server;
 
+import Communication.ReservationProvider;
+import Communication.server.models.FrontendRoom;
 import Communication.server.models.ReservationJavaScript;
 import Reservation.Reservation;
 import com.google.gson.Gson;
+import Reservation.Room;
 import shared.EncapsulatingMessageGenerator;
 import shared.IEncapsulatingMessageGenerator;
 
@@ -43,14 +46,21 @@ public class MessageSender implements  IMessageSender{
     {
         try {
             session.getBasicRemote().sendText(message);
+            System.out.println("Sent message to " + session.getId());
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void sendReservationDump(Session session, ArrayList<Reservation> reservations){
-        Gson gson = new Gson();
-        this.sendToClient(session, gson.toJson(ReservationJavaScript.Convert( reservations)));
+    public void sendReservationDump(){
+
+        List<Room> rooms = ReservationProvider.getInstance().getCollection().getAllRooms();
+        ArrayList<FrontendRoom> frontendRooms = new ArrayList<>();
+        for(Room r : rooms) {
+            frontendRooms.add(FrontendRoom.Convert(r));
+        }
+        broadcast(frontendRooms);
+
     }
 
     public void broadcast(Object object)

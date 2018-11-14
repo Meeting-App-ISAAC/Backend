@@ -8,6 +8,8 @@ import Communication.server.models.ReservationJavaScript;
 import Reservation.Room;
 import Reservation.RoomCollection;
 import Reservation.RoomMemory;
+import Settings.FrontendSettings;
+import Settings.SettingsHandler;
 import com.google.gson.Gson;
 import shared.EncapsulatingMessageGenerator;
 import shared.IEncapsulatingMessageGenerator;
@@ -30,11 +32,14 @@ public class WebSocket implements IWebSocket{
     private RoomCollection rooms;
     private SessionProvider sessionProvider = SessionProvider.getInstance();
 
+    private SettingsListener settingsListener;
 
     public WebSocket() {
         messageGenerator = new EncapsulatingMessageGenerator();
         messageToObjectServer = new MessageToObjectServer();
         rooms = ReservationProvider.getInstance().getCollection();
+        settingsListener = new SettingsListener();
+        SettingsHandler.Instance().addObserver(settingsListener);
     }
 
     @OnOpen
@@ -44,16 +49,14 @@ public class WebSocket implements IWebSocket{
 
         listener.add(new RoomListener(session));
         sessionProvider.addSession(session);
+
+        FrontendSettings frontendSettings = new FrontendSettings();
+        sendTo(session.getId(),frontendSettings);
     }
 
     @OnMessage
     public void onWebSocketText(String message, Session session)
     {
-        ReservationsRequest roomId = gson.fromJson(message, ReservationsRequest.class);
-        Room room = rooms.getRoom(roomId.getRoomId());
-        addRoomToListener(session, room);
-
-        sendToClient(session,gson.toJson(ReservationJavaScript.Convert( room.getReservations())));
     }
 
 
@@ -94,6 +97,7 @@ public class WebSocket implements IWebSocket{
     {
         try {
             session.getBasicRemote().sendText(message);
+            System.out.println("Send " + message);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

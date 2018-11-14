@@ -4,26 +4,21 @@ import java.io.IOException;
 
 public class FrontendSettings {
 
-    private int serverPort;
+    private String type = "settings";
     private boolean reservationStartEnabled;
     private boolean reservationStopEnabled;
     private String language;
     private int maxReservationWindow;
 
-    public FrontendSettings() throws IOException {
-        this.serverPort = Integer.parseInt(SettingsHandler.getProperty("SERVER_PORT"));
-        this.reservationStartEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_START_ENABLED"));
-        this.reservationStopEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_STOP_ENABLED"));
-        this.language = SettingsHandler.getProperty("LANGUAGE");
-        this.maxReservationWindow = Integer.parseInt(SettingsHandler.getProperty("MAX_RESERVATION_WINDOW"));
-    }
-
-    public int getServerPort() {
-        return serverPort;
-    }
-
-    public void setServerPort(int serverPort) {
-        this.serverPort = serverPort;
+    public FrontendSettings(){
+        try {
+            this.reservationStartEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_START_ENABLED"));
+            this.reservationStopEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_STOP_ENABLED"));
+            this.language = SettingsHandler.getProperty("LANGUAGE");
+            this.maxReservationWindow = Integer.parseInt(SettingsHandler.getProperty("MAX_RESERVATION_WINDOW"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean isReservationStartEnabled() {
@@ -60,7 +55,6 @@ public class FrontendSettings {
 
     public void update() {
         try {
-            this.serverPort = Integer.parseInt(SettingsHandler.getProperty("SERVER_PORT"));
             this.reservationStartEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_START_ENABLED"));
             this.reservationStopEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_STOP_ENABLED"));
             this.language = SettingsHandler.getProperty("LANGUAGE");

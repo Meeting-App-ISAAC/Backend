@@ -35,6 +35,6 @@ public class RoomListener implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        this.messageSender.sendReservationDump(this.session, this.room.getReservations());
+        this.messageSender.sendReservationDump();
     }
 }
