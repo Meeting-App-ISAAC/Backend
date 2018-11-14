@@ -18,15 +18,11 @@ import java.util.List;
 
 public class MessageSender implements  IMessageSender{
     private IEncapsulatingMessageGenerator messageGenerator;
-    private static ArrayList<Session> sessions = new ArrayList<>();
 
     public MessageSender() {
         messageGenerator = new EncapsulatingMessageGenerator();
     }
 
-    public void setSessions(ArrayList<Session> sessions) {
-        MessageSender.sessions = sessions;
-    }
 
     public void sendTo(String sessionId, Object object)
     {
@@ -79,7 +75,7 @@ public class MessageSender implements  IMessageSender{
 
     public void broadcast(Object object)
     {
-        for(Session s : sessions) {
+        for(Session s : SessionProvider.getInstance().getSessions()) {
             sendTo(s.getId(), object);
         }
     }

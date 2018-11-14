@@ -12,7 +12,6 @@ public class SettingsListener implements Observer {
         System.out.println("SettingsListener called");
         MessageSender messageSender = new MessageSender();
         FrontendSettings frontendSettings = new FrontendSettings();
-        messageSender.setSessions(SessionProvider.getInstance().getSessions());
         messageSender.broadcast(frontendSettings);
     }
 }
