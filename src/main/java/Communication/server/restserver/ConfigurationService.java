@@ -1,8 +1,12 @@
 package Communication.server.restserver;
 
+import CalendarResource.Calender;
+import CalendarResource.DummyCalender;
 import Communication.server.restserver.response.Reply;
 import Communication.server.restserver.response.Status;
 import Communication.server.restserver.responseModels.RoomDataResponse;
+import Reservation.Reservation;
+import Reservation.Room;
 import RoomConfiguration.ReadRoomConfig;
 import RoomConfiguration.RoomDataModel;
 import com.google.gson.Gson;
@@ -13,6 +17,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 @Path("/config")
 public class ConfigurationService {
@@ -35,6 +41,23 @@ public class ConfigurationService {
         readRoomConfig.SaveRoomData(roomData);
 
         reply = new Reply(Status.OK, gson.toJson(roomDataResponse));
+        return Response.status(reply.getStatus().getCode())
+                .entity(reply.getMessage()).build();
+    }
+
+    @GET
+    @Path("/rooms")
+    public Response getRooms() {
+        Reply reply = null;
+        Calender calender = new DummyCalender();
+        List<Room> rooms = new ArrayList<Room>();
+        for (Room room: calender.getRooms()){
+            Room tempRoom = new Room();
+            tempRoom.setId(room.getId());
+            tempRoom.setName(room.getName());
+            rooms.add(tempRoom);
+        }
+        reply = new Reply(Status.OK, gson.toJson(rooms));
         return Response.status(reply.getStatus().getCode())
                 .entity(reply.getMessage()).build();
     }
