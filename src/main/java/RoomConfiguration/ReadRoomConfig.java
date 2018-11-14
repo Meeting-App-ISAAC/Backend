@@ -12,6 +12,8 @@ public class ReadRoomConfig {
 
     public ArrayList<RoomDataModel> GetRoomData(){
         String data = null;
+        File f = new File("target/classes/roomdata.txt");
+        if(f.isFile()) {
         try {
             data = ReadFile("target/classes/roomdata.txt");
         } catch (IOException e) {
@@ -19,6 +21,10 @@ public class ReadRoomConfig {
         }
         RoomDataModel[] roomData = gson.fromJson(data, RoomDataModel[].class);
         return new ArrayList<RoomDataModel>(Arrays.asList(roomData));
+
+        } else {
+            return new ArrayList<RoomDataModel>();
+        }
     }
 
 
