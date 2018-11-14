@@ -3,6 +3,7 @@ package Communication.server;
 import CalendarResource.Calender;
 import CalendarResource.DummyCalender;
 import Communication.ReservationProvider;
+import Communication.SessionProvider;
 import Communication.server.models.ReservationJavaScript;
 import Reservation.Room;
 import Reservation.RoomCollection;
@@ -27,6 +28,7 @@ public class WebSocket implements IWebSocket{
 
     private Calender calender;
     private RoomCollection rooms;
+    private SessionProvider sessionProvider = SessionProvider.getInstance();
 
 
     public WebSocket() {
@@ -41,6 +43,7 @@ public class WebSocket implements IWebSocket{
         System.out.println("Socket Connected: " + session);
 
         listener.add(new RoomListener(session));
+        sessionProvider.addSession(session);
     }
 
     @OnMessage

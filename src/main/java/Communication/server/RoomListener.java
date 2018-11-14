@@ -1,6 +1,5 @@
 package Communication.server;
 
-import Communication.server.models.ReservationJavaScript;
 import Reservation.Room;
 import javax.websocket.Session;
 import java.util.Observable;
