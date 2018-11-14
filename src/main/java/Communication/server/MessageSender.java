@@ -52,4 +52,11 @@ public class MessageSender implements  IMessageSender{
         Gson gson = new Gson();
         this.sendToClient(session, gson.toJson(ReservationJavaScript.Convert( reservations)));
     }
+
+    public void broadcast(Object object)
+    {
+        for(Session s : sessions) {
+            sendTo(s.getId(), object);
+        }
+    }
 }
