@@ -10,8 +10,13 @@ import java.util.Scanner;
 public class ReadRoomConfig {
     Gson gson = new Gson();
 
-    public ArrayList<RoomDataModel> GetRoomData() throws IOException {
-        String data = ReadFile("target/classes/roomdata.txt");
+    public ArrayList<RoomDataModel> GetRoomData(){
+        String data = null;
+        try {
+            data = ReadFile("target/classes/roomdata.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         RoomDataModel[] roomData = gson.fromJson(data, RoomDataModel[].class);
         return new ArrayList<RoomDataModel>(Arrays.asList(roomData));
     }
@@ -22,11 +27,13 @@ public class ReadRoomConfig {
         return new Scanner(new File(file)).useDelimiter("\\Z").next();
     }
 
-    public void SaveRoomData(ArrayList<RoomDataModel> roomData) throws FileNotFoundException{
+    public void SaveRoomData(ArrayList<RoomDataModel> roomData){
         File f = new File("target/classes/roomdata.txt");
         if(f.isFile()) {
             try (PrintWriter out = new PrintWriter(f)) {
                 out.println(gson.toJson(roomData));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
         } else {
             try {
