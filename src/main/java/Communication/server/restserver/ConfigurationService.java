@@ -2,6 +2,7 @@ package Communication.server.restserver;
 
 import Communication.server.restserver.response.Reply;
 import Communication.server.restserver.response.Status;
+import Communication.server.restserver.responseModels.RoomDataResponse;
 import RoomConfiguration.ReadRoomConfig;
 import RoomConfiguration.RoomDataModel;
 import com.google.gson.Gson;
@@ -27,8 +28,13 @@ public class ConfigurationService {
         RoomDataModel roomDataModel = new RoomDataModel();
         roomDataModel.setId(roomData.size() + 1);
         roomDataModel.setSecret("test");
-        
-        reply = new Reply(Status.OK, gson.toJson(roomDataModel));
+        RoomDataResponse roomDataResponse = new RoomDataResponse();
+        roomDataResponse.setId(roomData.size() + 1);
+        roomDataResponse.setSecret("test");
+        roomData.add(roomDataModel);
+        readRoomConfig.SaveRoomData(roomData);
+
+        reply = new Reply(Status.OK, gson.toJson(roomDataResponse));
         return Response.status(reply.getStatus().getCode())
                 .entity(reply.getMessage()).build();
     }
