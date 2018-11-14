@@ -11,16 +11,11 @@ public class FrontendSettings {
     private int maxReservationWindow;
 
     public FrontendSettings() throws IOException {
-        try {
-            this.serverPort = Integer.parseInt(SettingsHandler.getProperty("SERVER_PORT"));
-            this.reservationStartEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_START_ENABLED"));
-            this.reservationStopEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_STOP_ENABLED"));
-            this.language = SettingsHandler.getProperty("LANGUAGE");
-            this.maxReservationWindow = Integer.parseInt(SettingsHandler.getProperty("MAX_RESERVATION_WINDOW"));
-        }
-        catch (IOException e) {
-            System.out.println("[error] Could not get properties file");
-        }
+        this.serverPort = Integer.parseInt(SettingsHandler.getProperty("SERVER_PORT"));
+        this.reservationStartEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_START_ENABLED"));
+        this.reservationStopEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_STOP_ENABLED"));
+        this.language = SettingsHandler.getProperty("LANGUAGE");
+        this.maxReservationWindow = Integer.parseInt(SettingsHandler.getProperty("MAX_RESERVATION_WINDOW"));
     }
 
     public int getServerPort() {
@@ -61,5 +56,18 @@ public class FrontendSettings {
 
     public void setMaxReservationWindow(int maxReservationWindow) {
         this.maxReservationWindow = maxReservationWindow;
+    }
+
+    public void update() {
+        try {
+            this.serverPort = Integer.parseInt(SettingsHandler.getProperty("SERVER_PORT"));
+            this.reservationStartEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_START_ENABLED"));
+            this.reservationStopEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_STOP_ENABLED"));
+            this.language = SettingsHandler.getProperty("LANGUAGE");
+            this.maxReservationWindow = Integer.parseInt(SettingsHandler.getProperty("MAX_RESERVATION_WINDOW"));
+        }
+        catch (IOException e) {
+            System.out.println("[error] Could not get properties");
+        }
     }
 }
