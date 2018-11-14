@@ -1,7 +1,10 @@
 package Communication.server;
 
+import Communication.ReservationProvider;
 import Communication.server.restserver.ConfigurationService;
 import Communication.server.restserver.ReservationService;
+import Reservation.Room;
+import Reservation.RoomCollection;
 import Settings.SettingsHandler;
 import Settings.SettingsWatcher;
 import com.google.gson.Gson;
@@ -18,12 +21,14 @@ import javax.websocket.server.ServerContainer;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Timer;
 
 public class Server {
     public static void main(String[] args)
     {
+
         // Reservation timeout
         boolean timerEnabled = true;
         try {
@@ -91,6 +96,14 @@ public class Server {
 
             // Add WebSocket endpoint to javax.websocket layer
             wscontainer.addEndpoint(WebSocket.class);
+
+            ArrayList<RoomListener> col = new ArrayList<>();
+            RoomCollection collection = ReservationProvider.getInstance().getCollection();
+            for (Room room: collection.getAllRooms()) {
+                RoomListener roomListener = new RoomListener();
+                roomListener.setRoom(room);
+                col.add(roomListener);
+            }
 
             server.start();
             server.dump(System.err);

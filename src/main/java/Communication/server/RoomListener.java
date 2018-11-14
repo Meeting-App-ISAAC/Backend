@@ -12,8 +12,7 @@ public class RoomListener implements Observer {
     private Room room;
     private Session session;
 
-    public RoomListener(Session session) {
-        this.session = session;
+    public RoomListener() {
     }
 
     public Room getRoom() {

@@ -1,12 +1,11 @@
 package Communication.server.restserver;
 
-import CalendarResource.Calender;
-import CalendarResource.DummyCalender;
+import Communication.ReservationProvider;
 import Communication.server.restserver.response.Reply;
 import Communication.server.restserver.response.Status;
 import Communication.server.restserver.responseModels.RoomDataResponse;
-import Reservation.Reservation;
 import Reservation.Room;
+import Reservation.RoomCollection;
 import RoomConfiguration.ReadRoomConfig;
 import RoomConfiguration.RoomDataModel;
 import com.google.gson.Gson;
@@ -49,9 +48,9 @@ public class ConfigurationService {
     @Path("/rooms")
     public Response getRooms() {
         Reply reply = null;
-        Calender calender = new DummyCalender();
+        RoomCollection collection = ReservationProvider.getInstance().getCollection();
         List<Room> rooms = new ArrayList<Room>();
-        for (Room room: calender.getRooms()){
+        for (Room room: collection.getAllRooms()){
             Room tempRoom = new Room();
             tempRoom.setId(room.getId());
             tempRoom.setName(room.getName());

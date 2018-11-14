@@ -1,11 +1,13 @@
 package Communication.server;
 
 import Communication.ReservationProvider;
+import Communication.SessionProvider;
 import Communication.server.models.FrontendRoom;
 import Communication.server.models.ReservationJavaScript;
 import Reservation.Reservation;
 import com.google.gson.Gson;
 import Reservation.Room;
+import org.eclipse.persistence.sessions.factories.SessionManager;
 import shared.EncapsulatingMessageGenerator;
 import shared.IEncapsulatingMessageGenerator;
 
@@ -34,7 +36,7 @@ public class MessageSender implements  IMessageSender{
 
     public Session getSessionFromId(String sessionId)
     {
-        for(Session s : sessions)
+        for(Session s : SessionProvider.getInstance().getSessions())
         {
             if(s.getId().equals(sessionId))
                 return s;
@@ -62,6 +64,18 @@ public class MessageSender implements  IMessageSender{
         broadcast(frontendRooms);
 
     }
+
+    public void sendReservationDump(Session s ){
+
+        List<Room> rooms = ReservationProvider.getInstance().getCollection().getAllRooms();
+        ArrayList<FrontendRoom> frontendRooms = new ArrayList<>();
+        for(Room r : rooms) {
+            frontendRooms.add(FrontendRoom.Convert(r));
+        }
+        sendTo(s.getId(), frontendRooms);
+
+    }
+
 
     public void broadcast(Object object)
     {

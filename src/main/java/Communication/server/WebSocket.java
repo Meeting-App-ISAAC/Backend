@@ -11,6 +11,7 @@ import Reservation.RoomMemory;
 import Settings.FrontendSettings;
 import Settings.SettingsHandler;
 import com.google.gson.Gson;
+import org.eclipse.persistence.sessions.factories.SessionManager;
 import shared.EncapsulatingMessageGenerator;
 import shared.IEncapsulatingMessageGenerator;
 import shared.messages.ReservationsRequest;
@@ -47,9 +48,9 @@ public class WebSocket implements IWebSocket{
     {
         System.out.println("Socket Connected: " + session);
 
-        listener.add(new RoomListener(session));
         sessionProvider.addSession(session);
-
+        IMessageSender message = new MessageSender();
+        message.sendReservationDump(session);
         FrontendSettings frontendSettings = new FrontendSettings();
         sendTo(session.getId(),frontendSettings);
     }
@@ -77,10 +78,11 @@ public class WebSocket implements IWebSocket{
 
     public Session getSessionFromId(String sessionId)
     {
-        for(RoomListener r : listener)
+
+        for(Session s : sessionProvider.getSessions())
         {
-            if(r.getSession().getId().equals(sessionId))
-                return r.getSession();
+            if(s.getId().equals(sessionId))
+                return s;
         }
         return null;
     }
