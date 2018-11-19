@@ -28,6 +28,7 @@ public class WebSocket implements IWebSocket{
     private Gson gson = new Gson();
     private MessageToObjectServer messageToObjectServer;
     private IEncapsulatingMessageGenerator messageGenerator;
+    private Session websocketSession;
 
     private Calender calender;
     private RoomCollection rooms;
@@ -49,6 +50,7 @@ public class WebSocket implements IWebSocket{
         System.out.println("Socket Connected: " + session);
 
         sessionProvider.addSession(session);
+        websocketSession = session;
         IMessageSender message = new MessageSender();
         message.sendReservationDump(session);
         FrontendSettings frontendSettings = new FrontendSettings();
@@ -110,6 +112,7 @@ public class WebSocket implements IWebSocket{
     @OnClose
     public void onWebSocketClose(CloseReason reason)
     {
+        sessionProvider.removeSession(websocketSession);
         System.out.println("Socket Closed: " + reason);
     }
 
