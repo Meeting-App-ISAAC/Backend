@@ -1,8 +1,13 @@
 package Communication.server;
 
+import Communication.ReservationProvider;
+import Communication.SessionProvider;
+import Communication.server.models.FrontendRoom;
 import Communication.server.models.ReservationJavaScript;
 import Reservation.Reservation;
 import com.google.gson.Gson;
+import Reservation.Room;
+import org.eclipse.persistence.sessions.factories.SessionManager;
 import shared.EncapsulatingMessageGenerator;
 import shared.IEncapsulatingMessageGenerator;
 
@@ -13,15 +18,11 @@ import java.util.List;
 
 public class MessageSender implements  IMessageSender{
     private IEncapsulatingMessageGenerator messageGenerator;
-    private static ArrayList<Session> sessions = new ArrayList<>();
 
     public MessageSender() {
         messageGenerator = new EncapsulatingMessageGenerator();
     }
 
-    public void setSessions(ArrayList<Session> sessions) {
-        MessageSender.sessions = sessions;
-    }
 
     public void sendTo(String sessionId, Object object)
     {
@@ -31,7 +32,7 @@ public class MessageSender implements  IMessageSender{
 
     public Session getSessionFromId(String sessionId)
     {
-        for(Session s : sessions)
+        for(Session s : SessionProvider.getInstance().getSessions())
         {
             if(s.getId().equals(sessionId))
                 return s;
@@ -43,13 +44,39 @@ public class MessageSender implements  IMessageSender{
     {
         try {
             session.getBasicRemote().sendText(message);
+            System.out.println("Sent message to " + session.getId());
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void sendReservationDump(Session session, ArrayList<Reservation> reservations){
-        Gson gson = new Gson();
-        this.sendToClient(session, gson.toJson(ReservationJavaScript.Convert( reservations)));
+    public void sendReservationDump(){
+
+        List<Room> rooms = ReservationProvider.getInstance().getCollection().getAllRooms();
+        ArrayList<FrontendRoom> frontendRooms = new ArrayList<>();
+        for(Room r : rooms) {
+            frontendRooms.add(FrontendRoom.Convert(r));
+        }
+        broadcast(frontendRooms);
+
+    }
+
+    public void sendReservationDump(Session s ){
+
+        List<Room> rooms = ReservationProvider.getInstance().getCollection().getAllRooms();
+        ArrayList<FrontendRoom> frontendRooms = new ArrayList<>();
+        for(Room r : rooms) {
+            frontendRooms.add(FrontendRoom.Convert(r));
+        }
+        sendTo(s.getId(), frontendRooms);
+
+    }
+
+
+    public void broadcast(Object object)
+    {
+        for(Session s : SessionProvider.getInstance().getSessions()) {
+            sendTo(s.getId(), object);
+        }
     }
 }

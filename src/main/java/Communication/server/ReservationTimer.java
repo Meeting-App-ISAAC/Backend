@@ -51,6 +51,7 @@ public class ReservationTimer extends TimerTask {
         RoomCollection roomCollection = ReservationProvider.getInstance().getCollection();
         List<Room> rooms = roomCollection.getAllRooms();
         for(Room r : rooms) {
+            reservations.clear();
             reservations.addAll(r.getReservations());
         }
     }

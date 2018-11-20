@@ -65,7 +65,6 @@ public class ReservationService {
 
         for (Reservation reservation : reservations) {
             if (reservation.getId() == reservationStopResponse.getReservationId() && reservation.getHasStarted()) {
-                reservation.setHasStarted(false);
                 reservation.setEnd(LocalDateTime.now());
                 reservation.Changed(Changed.StoppedMeeting);
                 reply = new Reply(Status.OK, true);

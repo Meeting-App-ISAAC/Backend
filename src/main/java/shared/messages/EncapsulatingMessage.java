@@ -3,9 +3,9 @@ package shared.messages;
 public class EncapsulatingMessage {
     private String messageType;
 
-    private String messageData;
+    private Object messageData;
 
-    public EncapsulatingMessage(String type, String data)
+    public EncapsulatingMessage(String type, Object data)
     {
         this.messageType = type;
         this.messageData = data;
@@ -16,7 +16,7 @@ public class EncapsulatingMessage {
         return messageType;
     }
 
-    public String getMessageData(){
+    public Object getMessageData(){
         return messageData;
     }
 }

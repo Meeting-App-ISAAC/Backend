@@ -7,6 +7,6 @@ import java.util.ArrayList;
 
 public interface IMessageSender {
     void sendTo(String sessionId, Object object);
-    void setSessions(ArrayList<Session> sessions);
-    void sendReservationDump(Session session, ArrayList<Reservation> reservations);
+    void sendReservationDump();
+    void sendReservationDump(Session s);
 }
