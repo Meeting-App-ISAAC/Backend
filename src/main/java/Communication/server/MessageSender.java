@@ -112,9 +112,11 @@ public class MessageSender implements  IMessageSender{
                 if(rjs.startHour < 0) {
                     rjs.setStartHour(0);
                 }
-                else if(rjs.startHour + rjs.length > 24) {
-                    rjs.length = 24 - rjs.startHour;
+                if(rjs.startHour + rjs.length > 24) {
+                    rjs.setLength(24.0 - rjs.startHour);
                 }
+                System.out.println("[info] Reservation reformatted");
+                System.out.println("[info] StartHour: " + rjs.startHour + " Length: " + rjs.length);
             }
         }
         return input;
