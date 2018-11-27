@@ -38,6 +38,7 @@ public class CheckOverlap {
 
     public boolean reservationChecker(ArrayList<Reservation> reservations, Reservation reservation) {
         boolean overlap = false;
+        int reservationCheckerCount = 0;
         for (int i = 0; i < reservations.size(); i++) {
             if (!(reservation.getId() == reservations.get(i).getId())) {
                 if (reservation.getStart().isBefore(reservations.get(i).getStart()) && reservation.getEnd().isBefore(reservations.get(i).getStart())) {

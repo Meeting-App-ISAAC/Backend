@@ -61,6 +61,17 @@ class RoomTest {
     }
 
     @Test
+    void overwriteReservations(){
+        room.addReservation(new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 10, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 11, 0, 0, 0)));
+        Assert.assertEquals(1, room.getReservations().size());
+        ArrayList<Reservation> reservations = new ArrayList<>();
+        reservations.add(new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 10, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 11, 0, 0, 0)));
+        reservations.add(new Reservation(new User(), LocalDateTime.of(2018, 10, 22, 10, 0, 0, 0), LocalDateTime.of(2018, 10, 22, 11, 0, 0, 0)));
+        room.overwriteReservations(reservations);
+        Assert.assertEquals(2, room.getReservations().size());
+    }
+
+    @Test
     void checkReservationOverlap() {
         // Existing reservation
         Reservation reservationcheck = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 6, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 8, 0, 0, 0));
