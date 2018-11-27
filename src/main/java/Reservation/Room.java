@@ -93,6 +93,11 @@ public class Room extends java.util.Observable implements Observer {
         reservations.remove(reservation);
     }
 
+    public void overwriteReservations(ArrayList<Reservation> reservations){
+        this.reservations.clear();
+        setReservations(reservations);
+    }
+
     public Boolean isOccupied(LocalDateTime time) {
         boolean reservationFound = false;
         for (Reservation r : this.reservations) {

@@ -29,6 +29,7 @@ public class WebSocket implements IWebSocket{
     private MessageToObjectServer messageToObjectServer;
     private IEncapsulatingMessageGenerator messageGenerator;
     private Session websocketSession;
+    private IMessageSender message = new MessageSender();
 
     private Calender calender;
     private RoomCollection rooms;
@@ -51,7 +52,6 @@ public class WebSocket implements IWebSocket{
 
         sessionProvider.addSession(session);
         websocketSession = session;
-        IMessageSender message = new MessageSender();
         message.sendReservationDump(session);
         FrontendSettings frontendSettings = new FrontendSettings();
         sendTo(session.getId(),frontendSettings);
