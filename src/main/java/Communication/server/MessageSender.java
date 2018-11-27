@@ -101,7 +101,19 @@ public class MessageSender implements  IMessageSender{
         for(Room r : rooms) {
             frontendRooms.add(FrontendRoom.Convert(r));
         }
-        // Return list of frontendRooms
-        return frontendRooms;
+        // Return list of frontendRooms (after reformatting negative start hours to 0)
+        return reformatNegativeStart(frontendRooms);
+    }
+
+    private ArrayList<FrontendRoom> reformatNegativeStart(ArrayList<FrontendRoom> input) {
+        // Change reservations that have a negative start hour to start at 0
+        for(FrontendRoom r : input) {
+            for(ReservationJavaScript rjs : r.reservations) {
+                if(rjs.startHour < 0) {
+                    rjs.setStartHour(0);
+                }
+            }
+        }
+        return input;
     }
 }

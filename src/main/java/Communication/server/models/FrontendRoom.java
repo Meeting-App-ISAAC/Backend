@@ -16,7 +16,7 @@ public class FrontendRoom {
     private int capacity;
     private String name;
     private String location;
-    private ArrayList<ReservationJavaScript> reservations;
+    public ArrayList<ReservationJavaScript> reservations;
 
     public FrontendRoom() {
 
@@ -58,7 +58,9 @@ public class FrontendRoom {
         return reservations;
     }
 
-
+    public void setReservations(ArrayList<ReservationJavaScript> reservations) {
+        this.reservations = reservations;
+    }
 
     public void update() {
         if(this.id > 0) {
