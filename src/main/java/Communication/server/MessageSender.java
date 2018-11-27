@@ -112,6 +112,9 @@ public class MessageSender implements  IMessageSender{
                 if(rjs.startHour < 0) {
                     rjs.setStartHour(0);
                 }
+                else if(rjs.startHour + rjs.length > 24) {
+                    rjs.length = 24 - rjs.startHour;
+                }
             }
         }
         return input;
