@@ -43,6 +43,16 @@ class RoomTest {
     }
 
     @Test
+    void setReservations() {
+        Assert.assertEquals(0, room.getReservations().size());
+        ArrayList<Reservation> reservations = new ArrayList<>();
+        reservations.add(new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 10, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 11, 0, 0, 0)));
+        reservations.add(new Reservation(new User(), LocalDateTime.of(2018, 10, 22, 10, 0, 0, 0), LocalDateTime.of(2018, 10, 22, 11, 0, 0, 0)));
+        room.setReservations(reservations);
+        Assert.assertEquals(2, room.getReservations().size());
+    }
+
+    @Test
     void removeReservation() {
         Reservation removeReservation1 = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 8, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 9, 0, 0, 0));
         room.addReservation(removeReservation1);

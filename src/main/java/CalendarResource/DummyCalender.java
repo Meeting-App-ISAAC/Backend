@@ -23,9 +23,11 @@ public class DummyCalender implements Calender {
     @Override
     public List<Room> getRooms() {
         User user = new User(1, "Alex");
-        Reservation reservation = new Reservation(1, user, false,  LocalDateTime.now().withSecond(0).plusMinutes(31), LocalDateTime.now().withSecond(0).plusMinutes(60));
+        //Reservation reservation = new Reservation(1, user, false,  LocalDateTime.now().withSecond(0).plusMinutes(31), LocalDateTime.now().withSecond(0).plusMinutes(60));
+        Reservation reservation1 = new Reservation(1, user, false, LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1));
         ArrayList<Reservation> reservations = new ArrayList<Reservation>();
-        reservations.add(reservation);
+        //reservations.add(reservation);
+        reservations.add(reservation1);
         ArrayList<Room> rooms = new ArrayList<Room>();
         Room room = new Room(1, "DummyRoom", reservations);
         Room room1 = new Room(2, "Carlo's kamer", new ArrayList<Reservation>());
