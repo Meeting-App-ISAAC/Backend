@@ -57,12 +57,17 @@ public class Room extends java.util.Observable implements Observer {
             reservation.addObserver(this);
             return true;
         }
+        int reservationCount = 0;
         for (Reservation reservationCheck : reservations){
-            if (!(reservation.getStart().isAfter(reservationCheck.getEnd()) && reservation.getEnd().isBefore(reservationCheck.getStart()))){
-                reservations.add(reservation);
-                reservation.addObserver(this);
-                return true;
+            if (((reservation.getStart().isAfter(reservationCheck.getEnd()) || reservation.getStart().isBefore(reservationCheck.getStart())) && reservation.getEnd().isBefore(reservationCheck.getStart())) || reservation.getStart().isAfter(reservationCheck.getEnd())){
+                reservationCount++;
             }
+        }
+        if (reservationCount == reservations.size()){
+            reservations.add(reservation);
+            reservation.addObserver(this);
+            reservationCount = 0;
+            return true;
         }
         return false;
     }
