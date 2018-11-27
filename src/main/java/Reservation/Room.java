@@ -45,6 +45,27 @@ public class Room extends java.util.Observable implements Observer {
         return reservations;
     }
 
+    // Returns reservations for the day specified in the parameters
+    public ArrayList<Reservation> getReservationsForDay(LocalDateTime time) {
+        ArrayList<Reservation> reservationsToday = new ArrayList<Reservation>();
+        for (Reservation r : reservations) {
+            // Check if there are any reservations for the same year as the given time
+            if (r.getEnd().getYear() == time.getYear() || r.getStart().getYear() == time.getYear()) {
+                // Check if there are any reservations that start or end on the same day as the given time
+                // If so, add to list
+                if (r.getEnd().getDayOfYear() == time.getDayOfYear() || r.getStart().getDayOfYear() == time.getDayOfYear()) {
+                    reservationsToday.add(r);
+                }
+                // Check if there are any reservations that start before the given time and end after
+                // If so, add to list
+                else if (time.isBefore(r.getEnd()) && time.isAfter(r.getStart())) {
+                    reservationsToday.add(r);
+                }
+            }
+        }
+        return reservationsToday;
+    }
+
     public void setReservations(ArrayList<Reservation> reservations) {
         for (int i = reservations.size() - 1; i >= 0; i--) {
             this.addReservation(reservations.get(i));

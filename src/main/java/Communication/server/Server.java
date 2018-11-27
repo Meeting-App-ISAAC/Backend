@@ -1,6 +1,7 @@
 package Communication.server;
 
 import Communication.ReservationProvider;
+import Communication.server.Security.AuthenticationChecker;
 import Communication.server.restserver.ConfigurationService;
 import Communication.server.restserver.ReservationService;
 import Reservation.Room;
@@ -78,7 +79,7 @@ public class Server {
         cors.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
         cors.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
         cors.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,POST,HEAD,OPTIONS");
-        cors.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin");
+        cors.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin,Authorization");
         server.setHandler(context);
 
         ServletHolder jerseyServlet =
@@ -86,7 +87,7 @@ public class Server {
         jerseyServlet.setInitOrder(0);
         // Tells the Jersey Servlet which REST service/class to load.
         jerseyServlet.setInitParameter("jersey.config.server.provider.classnames",
-                "" + ReservationService.class.getCanonicalName() + ";" + ConfigurationService.class.getCanonicalName() + "");
+                "" + ReservationService.class.getCanonicalName() + ";" + ConfigurationService.class.getCanonicalName() + ";" + AuthenticationChecker.class.getCanonicalName() + "");
 
         try
         {

@@ -2,6 +2,7 @@ package Communication.server.restserver;
 
 import CalendarResource.Calender;
 import Communication.ReservationProvider;
+import Communication.server.Security.Secured;
 import Communication.server.restserver.response.Status;
 import Communication.server.restserver.responseModels.ReservationCreateResponse;
 import Communication.server.restserver.responseModels.ReservationExtendResponse;
@@ -30,6 +31,7 @@ public class ReservationService {
     Gson gson = new Gson();
     CheckOverlap overlap = new CheckOverlap();
 
+    @Secured
     @POST @Consumes("application/json")
     @Path("/start")
     public Response StartMeeting(String data){
@@ -53,6 +55,7 @@ public class ReservationService {
                 .entity(reply.getMessage()).build();
     }
 
+    @Secured
     @POST @Consumes("application/json")
     @Path("/stop")
     public Response StopMeeting(String data) {
@@ -77,7 +80,7 @@ public class ReservationService {
                 .entity(reply.getMessage()).build();
     }
 
-
+    @Secured
     @POST @Consumes("application/json")
     @Path("/extend")
     public Response ExtendMeeting(String data) {
@@ -96,6 +99,7 @@ public class ReservationService {
                 .entity(reply.getMessage()).build();
     }
 
+    @Secured
     @POST @Consumes("application/json")
     @Path("/create")
     public Response CreateMeeting(String data) {
@@ -132,6 +136,7 @@ public class ReservationService {
                 .entity(reply.getMessage()).build();
     }
 
+    @Secured
     @GET
     @Path("/users")
     public Response getUsers() {

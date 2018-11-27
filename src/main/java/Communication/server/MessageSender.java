@@ -13,6 +13,7 @@ import shared.IEncapsulatingMessageGenerator;
 
 import javax.websocket.Session;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,23 +53,31 @@ public class MessageSender implements  IMessageSender{
 
     public void sendReservationDump(){
 
+        /* OLD CODE SENDING ALL RESERVATIONS REGARDLESS OF DATE
         List<Room> rooms = ReservationProvider.getInstance().getCollection().getAllRooms();
         ArrayList<FrontendRoom> frontendRooms = new ArrayList<>();
         for(Room r : rooms) {
             frontendRooms.add(FrontendRoom.Convert(r));
         }
         broadcast(frontendRooms);
+        */
+
+        broadcast(ReservationDumpToday());
 
     }
 
     public void sendReservationDump(Session s ){
 
+        /* OLD CODE SENDING ALL RESERVATIONS REGARDLESS OF DATE
         List<Room> rooms = ReservationProvider.getInstance().getCollection().getAllRooms();
         ArrayList<FrontendRoom> frontendRooms = new ArrayList<>();
         for(Room r : rooms) {
             frontendRooms.add(FrontendRoom.Convert(r));
         }
         sendTo(s.getId(), frontendRooms);
+        */
+
+        sendTo(s.getId(), ReservationDumpToday());
 
     }
 
@@ -78,5 +87,21 @@ public class MessageSender implements  IMessageSender{
         for(Session s : SessionProvider.getInstance().getSessions()) {
             sendTo(s.getId(), object);
         }
+    }
+
+    private ArrayList<FrontendRoom> ReservationDumpToday() {
+        // Get rooms from ReservationProvider
+        List<Room> rooms = ReservationProvider.getInstance().getCollection().getAllRooms();
+        // Set reservations for each room to those relevant for today
+        for (Room r : rooms) {
+            r.setReservations(r.getReservationsForDay(LocalDateTime.now()));
+        }
+        ArrayList<FrontendRoom> frontendRooms = new ArrayList<>();
+        // Convert rooms to frontendRooms
+        for(Room r : rooms) {
+            frontendRooms.add(FrontendRoom.Convert(r));
+        }
+        // Return list of frontendRooms
+        return frontendRooms;
     }
 }
