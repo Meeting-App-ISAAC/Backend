@@ -19,28 +19,14 @@ class RoomTest {
     @BeforeEach
     void setUp() {
         room = new Room();
-        //Begins before ends in
-        Reservation reservation = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 5, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 7, 0, 0, 0));
-        //Begins before ends before
-        Reservation reservation1 = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 4, 1, 0, 0), LocalDateTime.of(2018, 10, 23, 5, 0, 0, 0));
-        //Begins after ends after
-        Reservation reservation2 = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 9, 1, 0, 0), LocalDateTime.of(2018, 10, 23, 10, 0, 0, 0));
-        //Begins in ends after
-        Reservation reservation3 = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 7, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 9, 0, 0, 0));
-        //Begins in ends in
-        Reservation reservation4 = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 7, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 7, 15, 0, 0));
-        //Begins before ends after
-        Reservation reservation5 = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 5, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 9, 0, 0, 0));
-
-        reservations.add(reservation);
-        reservations.add(reservation3);
-        reservations.add(reservation4);
-        room.addReservation(reservation);
-        //room.setReservations(reservations);
     }
 
     @Test
     void addReservation() {
+        // Existing reservation
+        Reservation reservation = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 5, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 7, 0, 0, 0));
+        room.addReservation(reservation);
+
         // Reservation that overlaps with an existing reservation
         Reservation reservationcheckfalse = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 6, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 8, 0, 0, 0));
 
@@ -51,12 +37,9 @@ class RoomTest {
         Assert.assertEquals(false, room.addReservation(reservationcheckfalse));
 
         // Reservation doesn't overlap with any other reservation so this should return true
-        //Assert.assertEquals(true, room.addReservation(reservationchecktrue));
-
-        room.addReservation(new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 4, 1, 0, 0), LocalDateTime.of(2018, 10, 23, 5, 0, 0, 0)));
-
-        // Reservation doesn't overlap with any other reservation so this should return true
         Assert.assertEquals(true, room.addReservation(reservationchecktrue));
+
+        Assert.assertEquals(2, room.getReservations().size());
     }
 
     @Test
@@ -66,22 +49,64 @@ class RoomTest {
         Reservation removeReservation2 = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 10, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 11, 0, 0, 0));
         room.addReservation(removeReservation2);
 
-        Assert.assertEquals(3, room.getReservations().size());
+        Assert.assertEquals(2, room.getReservations().size());
 
         room.removeReservation(removeReservation1);
 
-        Assert.assertEquals(2, room.getReservations().size());
+        Assert.assertEquals(1, room.getReservations().size());
 
         room.removeReservation(removeReservation2);
 
+        Assert.assertEquals(0, room.getReservations().size());
+    }
+
+    @Test
+    void checkReservationOverlap() {
+        // Existing reservation
+        Reservation reservationcheck = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 6, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 8, 0, 0, 0));
+
+        // Begins before and ends during existing reservation
+        Reservation reservation1 = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 5, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 7, 0, 0, 0));
+        // Begins before and ends before existing reservation
+        Reservation reservation2 = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 4, 1, 0, 0), LocalDateTime.of(2018, 10, 23, 5, 0, 0, 0));
+        // Begins after and ends after existing reservation
+        Reservation reservation3 = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 9, 1, 0, 0), LocalDateTime.of(2018, 10, 23, 10, 0, 0, 0));
+        // Begins during and ends after existing reservation
+        Reservation reservation4 = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 7, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 9, 0, 0, 0));
+        // Begins during and ends during existing reservation
+        Reservation reservation5 = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 7, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 7, 15, 0, 0));
+        // Begins before and ends after existing reservation
+        Reservation reservation6 = new Reservation(new User(), LocalDateTime.of(2018, 10, 23, 5, 0, 0, 0), LocalDateTime.of(2018, 10, 23, 9, 0, 0, 0));
+
+        room.addReservation(reservationcheck);
         Assert.assertEquals(1, room.getReservations().size());
-    }
 
-    @Test
-    void isOccupied() {
-    }
+        // This reservation begins before the existing reservation and ends during the existing reservation, this overlaps so this should return false.
+        Assert.assertFalse(room.addReservation(reservation1));
+        Assert.assertEquals(1, room.getReservations().size());
 
-    @Test
-    void roomChanged() {
+        // This reservation begins before the existing reservation and also ends before the existing reservation, this doesn't overlap so this should return true.
+        Assert.assertTrue(room.addReservation(reservation2));
+        Assert.assertEquals(2, room.getReservations().size());
+        room.removeReservation(reservation2);
+        Assert.assertEquals(1, room.getReservations().size());
+
+        // This reservation begins before the existing reservation and ends during the existing reservation, this overlaps so this should return false.
+        Assert.assertTrue(room.addReservation(reservation3));
+        Assert.assertEquals(2, room.getReservations().size());
+        room.removeReservation(reservation3);
+        Assert.assertEquals(1, room.getReservations().size());
+
+        // This reservation begins before the existing reservation and ends during the existing reservation, this overlaps so this should return false.
+        Assert.assertFalse(room.addReservation(reservation4));
+        Assert.assertEquals(1, room.getReservations().size());
+
+        // This reservation begins before the existing reservation and ends during the existing reservation, this overlaps so this should return false.
+        Assert.assertFalse(room.addReservation(reservation5));
+        Assert.assertEquals(1, room.getReservations().size());
+
+        // This reservation begins before the existing reservation and ends during the existing reservation, this overlaps so this should return false.
+        Assert.assertFalse(room.addReservation(reservation6));
+        Assert.assertEquals(1, room.getReservations().size());
     }
 }

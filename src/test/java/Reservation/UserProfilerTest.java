@@ -12,34 +12,26 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RoomMemoryTest {
+class UserProfilerTest {
 
-    List<Room> rooms = new ArrayList<>();
-    Room room1 = new Room();
-    Room room2 = new Room();
-    Room room3 = new Room();
     List<User> users = new ArrayList<>();
+    User user1 = new User();
+    User user2 = new User();
+    User user3 = new User();
+    List<Room> rooms = new ArrayList<>();
     User user = new User();
     Calender calender = null;
-    RoomMemory roomMemory = null;
+    UserProfiler userProfiler = null;
 
     @BeforeEach
     void setUp(){
         List<Reservation> reservations = new ArrayList<>();
-        user = new User(1, "TestUser");
-        users.add(user);
-        reservations.add(new Reservation(1, user, false, LocalDateTime.now(), LocalDateTime.now().plusMinutes(5)));
-
-        room1.setId(1);
-        room1.setName("TestRoom1");
-        room2.setId(2);
-        room2.setName("TestRoom2");
-        room3.setId(3);
-        room3.setName("TestRoom3");
-
-        rooms.add(room1);
-        rooms.add(room2);
-        rooms.add(room3);
+        user1 = new User(1, "User1");
+        user2 = new User(2, "User2");
+        user3 = new User(3, "User3");
+        users.add(user1);
+        users.add(user2);
+        users.add(user3);
 
         calender = new Calender() {
             @Override
@@ -61,31 +53,31 @@ class RoomMemoryTest {
             public List<User> getUsers() { return users; }
         };
 
-        roomMemory = new RoomMemory(calender);
+        userProfiler = new UserProfiler(calender);
     }
 
     @Test
-    void getRoom() {
+    void getUserById() {
 
         // Assert if roomMemory returns the room
-        Assert.assertEquals(room1, roomMemory.getRoom(1));
-        Assert.assertEquals(room2, roomMemory.getRoom(2));
-        Assert.assertEquals(room3, roomMemory.getRoom(3));
+        Assert.assertEquals(user1, userProfiler.getUserById(1));
+        Assert.assertEquals(user2, userProfiler.getUserById(2));
+        Assert.assertEquals(user3, userProfiler.getUserById(3));
 
         // If the room does not exist roomMemory should return a null
-        Assert.assertEquals(null, roomMemory.getRoom(4));
+        Assert.assertEquals(null, userProfiler.getUserById(4));
     }
 
     @Test
-    void getAllRooms() {
+    void getUsers() {
 
         // Assert if getAllRooms returns all rooms from roomMemory
-        Assert.assertEquals(rooms, roomMemory.getAllRooms());
+        Assert.assertEquals(users, userProfiler.getUsers());
     }
 
     @Test
     void calenderRoomsSize() {
-        Assert.assertEquals(rooms.size(), calender.getRooms().size());
+        Assert.assertEquals(users.size(), calender.getUsers().size());
     }
 
     @Test
