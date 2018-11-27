@@ -101,7 +101,6 @@ public class WebSocket implements IWebSocket{
     {
         try {
             session.getBasicRemote().sendText(message);
-            System.out.println("Send " + message);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

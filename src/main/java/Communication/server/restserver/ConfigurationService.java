@@ -47,13 +47,15 @@ public class ConfigurationService {
     @GET
     @Path("/rooms")
     public Response getRooms() {
+        ReadRoomConfig readRoomConfig = new ReadRoomConfig();
         Reply reply = null;
-        RoomCollection collection = ReservationProvider.getInstance().getCollection();
-        List<Room> rooms = new ArrayList<Room>();
-        for (Room room: collection.getAllRooms()){
-            Room tempRoom = new Room();
-            tempRoom.setId(room.getId());
-            tempRoom.setName(room.getName());
+        List<RoomDataModel> rooms = new ArrayList<RoomDataModel>();
+        for (RoomDataModel roomDataModel : readRoomConfig.GetRoomData()){
+            RoomDataModel tempRoom = new RoomDataModel();
+            tempRoom.setId(roomDataModel.getId());
+            tempRoom.setName(roomDataModel.getName());
+            tempRoom.setLocation(roomDataModel.getLocation());
+            tempRoom.setCapacity(roomDataModel.getCapacity());
             rooms.add(tempRoom);
         }
         reply = new Reply(Status.OK, gson.toJson(rooms));
