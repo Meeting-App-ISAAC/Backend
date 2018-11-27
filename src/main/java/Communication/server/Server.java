@@ -56,6 +56,10 @@ public class Server {
             timer.schedule(new SettingsWatcher(new File("target/classes/config.properties")),0,1000);
         }
 
+        // Broadcast reservations on new day
+        Timer timer = new Timer();
+        timer.schedule(new UtilTimerTask(LocalDateTime.now()),0,60000);
+
         org.eclipse.jetty.server.Server server = new org.eclipse.jetty.server.Server();
         ServerConnector connector = new ServerConnector(server);
         try {
