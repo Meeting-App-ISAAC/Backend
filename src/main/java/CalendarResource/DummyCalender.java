@@ -28,7 +28,9 @@ public class DummyCalender implements Calender {
         reservations.add(reservation);
         ArrayList<Room> rooms = new ArrayList<Room>();
         Room room = new Room(1, "DummyRoom", reservations);
+        Room room1 = new Room(2, "Carlo's kamer", new ArrayList<Reservation>());
         rooms.add(room);
+        rooms.add(room1);
         return rooms;
     }
 
