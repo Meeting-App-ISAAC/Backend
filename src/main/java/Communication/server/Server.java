@@ -1,6 +1,7 @@
 package Communication.server;
 
 import Communication.ReservationProvider;
+import Communication.server.Security.AuthenticationChecker;
 import Communication.server.restserver.ConfigurationService;
 import Communication.server.restserver.ReservationService;
 import Reservation.Room;
@@ -86,7 +87,7 @@ public class Server {
         jerseyServlet.setInitOrder(0);
         // Tells the Jersey Servlet which REST service/class to load.
         jerseyServlet.setInitParameter("jersey.config.server.provider.classnames",
-                "" + ReservationService.class.getCanonicalName() + ";" + ConfigurationService.class.getCanonicalName() + "");
+                "" + ReservationService.class.getCanonicalName() + ";" + ConfigurationService.class.getCanonicalName() + ";" + AuthenticationChecker.class.getCanonicalName() + "");
 
         try
         {

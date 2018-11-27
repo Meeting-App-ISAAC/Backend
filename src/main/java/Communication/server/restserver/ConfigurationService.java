@@ -1,6 +1,8 @@
 package Communication.server.restserver;
 
 import Communication.ReservationProvider;
+import Communication.server.Security.KeyGenerator;
+import Communication.server.Security.Secured;
 import Communication.server.restserver.response.Reply;
 import Communication.server.restserver.response.Status;
 import Communication.server.restserver.responseModels.RoomDataResponse;
@@ -15,6 +17,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -29,13 +33,15 @@ public class ConfigurationService {
     @Path("/secret")
     public Response getSecret() {
         Reply reply = null;
+        KeyGenerator keyGenerator = new KeyGenerator();
+        String key = keyGenerator.randomString(100);
         ArrayList<RoomDataModel> roomData = readRoomConfig.GetRoomData();
         RoomDataModel roomDataModel = new RoomDataModel();
         roomDataModel.setId(roomData.size() + 1);
-        roomDataModel.setSecret("test");
+        roomDataModel.setSecret(key);
         RoomDataResponse roomDataResponse = new RoomDataResponse();
         roomDataResponse.setId(roomData.size() + 1);
-        roomDataResponse.setSecret("test");
+        roomDataResponse.setSecret(key);
         roomData.add(roomDataModel);
         readRoomConfig.SaveRoomData(roomData);
 
@@ -45,6 +51,7 @@ public class ConfigurationService {
     }
 
     @GET
+    @Secured
     @Path("/rooms")
     public Response getRooms() {
         ReadRoomConfig readRoomConfig = new ReadRoomConfig();
@@ -64,6 +71,7 @@ public class ConfigurationService {
     }
 
     @POST
+    @Secured
     @Consumes("application/json")
     @Path("/createroom")
     public Response CreateRoom(String data) {
