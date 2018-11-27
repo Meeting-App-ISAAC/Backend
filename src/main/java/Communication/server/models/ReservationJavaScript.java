@@ -2,6 +2,7 @@ package Communication.server.models;
 
 import Reservation.Reservation;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 
@@ -44,6 +45,8 @@ public class ReservationJavaScript {
         this.length = length;
     }
 
+    public void setLength(double length) {this.length = length;}
+
     public boolean getHasStarted() {
         return hasStarted;
     }
@@ -61,8 +64,16 @@ public class ReservationJavaScript {
             temp.length = (double) Math.round((double) (reservation.getEnd().atZone(ZoneId.systemDefault())
                     .toInstant().toEpochMilli() - reservation.getStart().atZone(ZoneId.systemDefault())
                     .toInstant().toEpochMilli()) / 3600) / 1000;
-            temp.startHour = (double) reservation.getStart().getHour() + (double) reservation.getStart().getMinute() / 60 + (double) reservation.getStart().getSecond() / 3600;
             temp.hasStarted = reservation.getHasStarted();
+
+            if(reservation.getStart().getYear() != LocalDateTime.now().getYear() ||
+            reservation.getStart().getDayOfYear() != LocalDateTime.now().getDayOfYear()) {
+                temp.startHour = 0;
+            }
+            else {
+                temp.startHour = (double) reservation.getStart().getHour() + (double) reservation.getStart().getMinute() / 60 + (double) reservation.getStart().getSecond() / 3600;
+            }
+
             result.add(temp);
         }
         return result;
