@@ -4,6 +4,7 @@ import CalendarResource.Calender;
 import CalendarResource.DummyCalender;
 import Communication.ReservationProvider;
 import Communication.SessionProvider;
+import Communication.server.Security.AuthenticationChecker;
 import Communication.server.models.ReservationJavaScript;
 import Reservation.Room;
 import Reservation.RoomCollection;
@@ -48,29 +49,24 @@ public class WebSocket implements IWebSocket{
     @OnOpen
     public void onWebSocketConnect(Session session)
     {
-        System.out.println("Socket Connected: " + session);
 
-        sessionProvider.addSession(session);
-        websocketSession = session;
-        message.sendReservationDump(session);
-        FrontendSettings frontendSettings = new FrontendSettings();
-        sendTo(session.getId(),frontendSettings);
     }
 
     @OnMessage
-    public void onWebSocketText(String message, Session session)
+    public void onWebSocketText(String key, Session session)
     {
-    }
+        AuthenticationChecker authenticationChecker = new AuthenticationChecker();
+        if(authenticationChecker.checkKey(key)){
+            System.out.println("Socket Connected: " + session);
 
-
-    private void addRoomToListener(Session session, Room room) {
-        for (RoomListener roomListener : listener) {
-            if(roomListener.getSession().equals(session)){
-                roomListener.setRoom(room);
-                return;
-            }
+            sessionProvider.addSession(session);
+            websocketSession = session;
+            message.sendReservationDump(session);
+            FrontendSettings frontendSettings = new FrontendSettings();
+            sendTo(session.getId(), frontendSettings);
         }
     }
+
 
     public void sendTo(String sessionId, Object object)
     {

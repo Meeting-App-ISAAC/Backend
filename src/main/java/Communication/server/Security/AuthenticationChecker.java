@@ -64,13 +64,13 @@ public class AuthenticationChecker implements ContainerRequestFilter {
     }
 
     //Check key and perform actions
-    private void checkKey(String key) throws Exception {
+    public boolean checkKey(String key) {
         ReadRoomConfig readRoomConfig = new ReadRoomConfig();
         for (RoomDataModel roomDataModel : readRoomConfig.GetRoomData()){
             if (roomDataModel.getSecret().equals(key)) {
-                return;
+                return true;
             }
         }
-        throw new Exception();
+        return false;
     }
 }
