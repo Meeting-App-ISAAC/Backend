@@ -44,12 +44,6 @@ public class WebSocket implements IWebSocket{
     public void onWebSocketConnect(Session session)
     {
         System.out.println("[info] Socket connected but NOT (yet) authenticated: " + session);
-        System.out.println("[info] Socket connected & authenticated: " + session);
-        sessionProvider.addSession(session);
-        websocketSession = session;
-        message.sendReservationDump(session);
-        FrontendSettings frontendSettings = new FrontendSettings();
-        sendTo(session.getId(), frontendSettings);
     }
 
     @OnMessage
