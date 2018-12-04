@@ -1,4 +1,4 @@
-package Communication.server.Security;
+package Authentication;
 
 import Communication.server.restserver.response.Reply;
 import Communication.server.restserver.response.Status;

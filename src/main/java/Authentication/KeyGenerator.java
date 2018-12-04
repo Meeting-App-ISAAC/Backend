@@ -1,4 +1,4 @@
-package Communication.server.Security;
+package Authentication;
 
 import RoomConfiguration.ReadRoomConfig;
 import RoomConfiguration.RoomDataModel;

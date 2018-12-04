@@ -1,8 +1,7 @@
 package Communication.server.restserver;
 
-import CalendarResource.Calender;
 import Communication.ReservationProvider;
-import Communication.server.Security.Secured;
+import Authentication.Secured;
 import Communication.server.restserver.response.Status;
 import Communication.server.restserver.responseModels.ReservationCreateResponse;
 import Communication.server.restserver.responseModels.ReservationExtendResponse;

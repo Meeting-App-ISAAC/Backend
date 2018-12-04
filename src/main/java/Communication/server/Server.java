@@ -1,7 +1,7 @@
 package Communication.server;
 
 import Communication.ReservationProvider;
-import Communication.server.Security.AuthenticationChecker;
+import Authentication.AuthenticationChecker;
 import Communication.server.restserver.ConfigurationService;
 import Communication.server.restserver.ReservationService;
 import Reservation.Room;

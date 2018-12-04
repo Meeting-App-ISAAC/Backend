@@ -1,21 +1,15 @@
 package Communication.server;
 
 import CalendarResource.Calender;
-import CalendarResource.DummyCalender;
 import Communication.ReservationProvider;
 import Communication.SessionProvider;
-import Communication.server.Security.AuthenticationChecker;
-import Communication.server.models.ReservationJavaScript;
-import Reservation.Room;
+import Authentication.AuthenticationChecker;
 import Reservation.RoomCollection;
-import Reservation.RoomMemory;
 import Settings.FrontendSettings;
 import Settings.SettingsHandler;
 import com.google.gson.Gson;
-import org.eclipse.persistence.sessions.factories.SessionManager;
 import shared.EncapsulatingMessageGenerator;
 import shared.IEncapsulatingMessageGenerator;
-import shared.messages.ReservationsRequest;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
@@ -49,7 +43,7 @@ public class WebSocket implements IWebSocket{
     @OnOpen
     public void onWebSocketConnect(Session session)
     {
-
+        System.out.println("[info] Socket connected but NOT (yet) authenticated: " + session);
     }
 
     @OnMessage
@@ -57,13 +51,15 @@ public class WebSocket implements IWebSocket{
     {
         AuthenticationChecker authenticationChecker = new AuthenticationChecker();
         if(authenticationChecker.checkKey(key)){
-            System.out.println("Socket Connected: " + session);
-
+            System.out.println("[info] Socket connected & authenticated: " + session);
             sessionProvider.addSession(session);
             websocketSession = session;
             message.sendReservationDump(session);
             FrontendSettings frontendSettings = new FrontendSettings();
             sendTo(session.getId(), frontendSettings);
+        }
+        else {
+            System.out.println("[info] Connection " + session + " refused, invalid key");
         }
     }
 
@@ -108,7 +104,7 @@ public class WebSocket implements IWebSocket{
     public void onWebSocketClose(CloseReason reason)
     {
         sessionProvider.removeSession(websocketSession);
-        System.out.println("Socket Closed: " + reason);
+        System.out.println("[info] Socket Closed: " + reason);
     }
 
     @OnError

@@ -1,13 +1,10 @@
 package Communication.server.restserver;
 
-import Communication.ReservationProvider;
-import Communication.server.Security.KeyGenerator;
-import Communication.server.Security.Secured;
+import Authentication.KeyGenerator;
+import Authentication.Secured;
 import Communication.server.restserver.response.Reply;
 import Communication.server.restserver.response.Status;
 import Communication.server.restserver.responseModels.RoomDataResponse;
-import Reservation.Room;
-import Reservation.RoomCollection;
 import RoomConfiguration.ReadRoomConfig;
 import RoomConfiguration.RoomDataModel;
 import com.google.gson.Gson;
@@ -17,10 +14,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 @Path("/config")

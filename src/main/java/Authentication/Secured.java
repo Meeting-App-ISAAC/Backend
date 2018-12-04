@@ -1,4 +1,4 @@
-package Communication.server.Security;
+package Authentication;
 
 import javax.ws.rs.NameBinding;
 import java.lang.annotation.Retention;
