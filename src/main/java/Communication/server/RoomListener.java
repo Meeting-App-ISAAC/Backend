@@ -7,6 +7,8 @@ import java.util.Observer;
 
 public class RoomListener implements Observer {
 
+    // Listens for changes in a room
+
     private IMessageSender messageSender = new MessageSender();
 
     private Room room;

@@ -9,6 +9,8 @@ import Reservation.UserProfiler;
 
 public class ReservationProvider {
 
+    // Singleton providing an up-to-date list of all reservations stored within the application
+
     private RoomCollection collection;
     private UserCollection userCollection;
     private static ReservationProvider reservationProvider = new ReservationProvider();

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 public class SessionProvider {
 
+    // Singleton providing an up-to-date list of all current sessions
+
     private ArrayList<Session> sessions;
     private static SessionProvider sessionProvider = new SessionProvider();
 

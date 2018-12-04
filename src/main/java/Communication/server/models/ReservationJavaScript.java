@@ -7,6 +7,10 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 
 public class ReservationJavaScript {
+
+    // Model describing a reservation as it is defined within the frontend application
+    // Reservations should be converted into this class before being sent to the client
+
     public int id;
     public String title;
     public double startHour;

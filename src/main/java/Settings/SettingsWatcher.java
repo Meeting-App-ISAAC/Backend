@@ -1,13 +1,11 @@
 package Settings;
 
-import Communication.SessionProvider;
-import Communication.server.MessageSender;
-
 import java.io.File;
-import java.io.IOException;
 import java.util.TimerTask;
 
 public class SettingsWatcher extends TimerTask {
+
+    // Timer task looking for changes in the config file
 
     private long timeStamp;
     private File file;

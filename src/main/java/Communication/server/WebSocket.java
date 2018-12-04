@@ -49,8 +49,10 @@ public class WebSocket implements IWebSocket{
     @OnMessage
     public void onWebSocketText(String key, Session session)
     {
+        // Check whether the key received is valid
         AuthenticationChecker authenticationChecker = new AuthenticationChecker();
         if(authenticationChecker.checkKey(key)){
+            // If so, proceed with sending the client reservations
             System.out.println("[info] Socket connected & authenticated: " + session);
             sessionProvider.addSession(session);
             websocketSession = session;

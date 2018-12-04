@@ -12,6 +12,9 @@ import java.util.ArrayList;
 
 public class FrontendRoom {
 
+    // Model describing a room as it is defined within the frontend application
+    // Rooms should be converted into this class before being sent to clients
+
     private int id;
     private int capacity;
     private String name;
