@@ -36,7 +36,7 @@ pipeline {
       //  always {
       //    junit '**/target/surefire-reports/*.xml'
       //  }
-      }
+      //}
     }
     stage('Deploy dockerbranch') {
            when {
