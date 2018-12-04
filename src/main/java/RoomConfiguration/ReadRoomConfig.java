@@ -3,6 +3,7 @@ package RoomConfiguration;
 import com.google.gson.Gson;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -20,10 +21,10 @@ public class ReadRoomConfig {
             e.printStackTrace();
         }
         RoomDataModel[] roomData = gson.fromJson(data, RoomDataModel[].class);
-        return new ArrayList<RoomDataModel>(Arrays.asList(roomData));
+        return new ArrayList<>(Arrays.asList(roomData));
 
         } else {
-            return new ArrayList<RoomDataModel>();
+            return new ArrayList<>();
         }
     }
 
@@ -44,7 +45,7 @@ public class ReadRoomConfig {
         } else {
             try {
                 try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-                        new FileOutputStream(f), "utf-8"))) {
+                        new FileOutputStream(f), StandardCharsets.UTF_8))) {
                     writer.write(gson.toJson(roomData));
                 }
             } catch (IOException e) {

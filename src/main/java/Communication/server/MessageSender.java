@@ -4,10 +4,7 @@ import Communication.ReservationProvider;
 import Communication.SessionProvider;
 import Communication.server.models.FrontendRoom;
 import Communication.server.models.ReservationJavaScript;
-import Reservation.Reservation;
-import com.google.gson.Gson;
 import Reservation.Room;
-import org.eclipse.persistence.sessions.factories.SessionManager;
 import shared.EncapsulatingMessageGenerator;
 import shared.IEncapsulatingMessageGenerator;
 

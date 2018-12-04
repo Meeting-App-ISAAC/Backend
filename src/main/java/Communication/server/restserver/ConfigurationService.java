@@ -50,7 +50,7 @@ public class ConfigurationService {
     public Response getRooms() {
         ReadRoomConfig readRoomConfig = new ReadRoomConfig();
         Reply reply = null;
-        List<RoomDataModel> rooms = new ArrayList<RoomDataModel>();
+        List<RoomDataModel> rooms = new ArrayList<>();
         for (RoomDataModel roomDataModel : readRoomConfig.GetRoomData()){
             RoomDataModel tempRoom = new RoomDataModel();
             tempRoom.setId(roomDataModel.getId());

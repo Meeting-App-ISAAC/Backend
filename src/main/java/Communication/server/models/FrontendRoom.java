@@ -1,12 +1,10 @@
 package Communication.server.models;
 
 import Communication.ReservationProvider;
-import Reservation.Reservation;
 import RoomConfiguration.ReadRoomConfig;
 import RoomConfiguration.RoomDataModel;
 import Reservation.RoomCollection;
 import Reservation.Room;
-import Reservation.RoomMemory;
 
 import java.util.ArrayList;
 

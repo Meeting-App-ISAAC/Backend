@@ -1,6 +1,5 @@
 package Communication.server;
 
-import Communication.SessionProvider;
 import Settings.FrontendSettings;
 
 import java.util.Observable;
