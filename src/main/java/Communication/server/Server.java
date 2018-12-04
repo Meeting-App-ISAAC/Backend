@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Timer;
 
-public class Server {
+class Server {
     public static void main(String[] args)
     {
 

@@ -22,7 +22,7 @@ public class AuthenticationChecker implements ContainerRequestFilter {
     private static final String AUTHENTICATION_SCHEME = "Basic";
 
     @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException {
+    public void filter(ContainerRequestContext requestContext) {
 
         // Get the Authorization header from the request
         String authorizationHeader =

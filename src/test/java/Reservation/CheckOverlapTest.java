@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class CheckOverlapTest {
+class CheckOverlapTest {
 
-    Room room = null;
-    ArrayList<Reservation> reservations = new ArrayList<>();
+    private Room room = null;
+    private ArrayList<Reservation> reservations = new ArrayList<>();
 
     @BeforeEach
     void setUp() {

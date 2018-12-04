@@ -3,7 +3,7 @@ package Communication.server;
 import java.time.LocalDateTime;
 import java.util.TimerTask;
 
-public class UtilTimerTask extends TimerTask {
+class UtilTimerTask extends TimerTask {
 
     // Tasks that should be run on an interval (regardless of settings)
 

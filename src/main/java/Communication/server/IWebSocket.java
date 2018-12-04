@@ -1,6 +1,6 @@
 package Communication.server;
 
-public interface IWebSocket {
+interface IWebSocket {
     void sendTo(String sessionId, Object object);
     void broadcast(Object object);
 }

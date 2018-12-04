@@ -14,7 +14,7 @@ class ReservationProviderTest {
 
     private RoomCollection collection;
     private UserCollection userCollection;
-    Calender calender = new DummyCalender();
+    private Calender calender = new DummyCalender();
 
     @BeforeEach
     void setUp() {

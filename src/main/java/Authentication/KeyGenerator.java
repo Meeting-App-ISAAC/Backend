@@ -9,7 +9,7 @@ public class KeyGenerator {
 
     private static final String chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static SecureRandom secureRandom = new SecureRandom();
-    ReadRoomConfig readRoomConfig = new ReadRoomConfig();
+    private ReadRoomConfig readRoomConfig = new ReadRoomConfig();
 
     public String randomString( int len ){
         StringBuilder sb = new StringBuilder( len );

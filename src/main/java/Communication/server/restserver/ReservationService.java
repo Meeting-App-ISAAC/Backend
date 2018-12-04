@@ -27,8 +27,8 @@ import java.util.ArrayList;
 @Path("/api")
 public class ReservationService {
 
-    Gson gson = new Gson();
-    CheckOverlap overlap = new CheckOverlap();
+    private Gson gson = new Gson();
+    private CheckOverlap overlap = new CheckOverlap();
 
     @Secured
     @POST @Consumes("application/json")

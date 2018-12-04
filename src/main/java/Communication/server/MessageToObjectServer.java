@@ -6,11 +6,11 @@ import Reservation.Room;
 import com.google.gson.Gson;
 import shared.messages.ReservationsRequest;
 
-public class MessageToObjectServer {
+class MessageToObjectServer {
 
-    Gson gson = new Gson();
-    RoomCollection roomCollection = ReservationProvider.getInstance().getCollection();
-    MessageSender messageSender = new MessageSender();
+    private Gson gson = new Gson();
+    private RoomCollection roomCollection = ReservationProvider.getInstance().getCollection();
+    private MessageSender messageSender = new MessageSender();
 
     public void processMessage(String sessionId, String type, String data) {
         //Get the last part from the full package and type name

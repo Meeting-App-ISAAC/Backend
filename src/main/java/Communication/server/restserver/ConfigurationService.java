@@ -19,8 +19,8 @@ import java.util.List;
 
 @Path("/config")
 public class ConfigurationService {
-    Gson gson = new Gson();
-    ReadRoomConfig readRoomConfig = new ReadRoomConfig();
+    private Gson gson = new Gson();
+    private ReadRoomConfig readRoomConfig = new ReadRoomConfig();
 
 
     @GET

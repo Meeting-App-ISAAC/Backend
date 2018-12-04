@@ -28,7 +28,7 @@ public class MessageSender implements  IMessageSender{
         sendToClient(getSessionFromId(sessionId), msg);
     }
 
-    public Session getSessionFromId(String sessionId)
+    private Session getSessionFromId(String sessionId)
     {
         for(Session s : SessionProvider.getInstance().getSessions())
         {

@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class ReadRoomConfig {
-    Gson gson = new Gson();
+    private Gson gson = new Gson();
 
     public ArrayList<RoomDataModel> GetRoomData(){
         String data = null;

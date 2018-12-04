@@ -19,7 +19,7 @@ public class FrontendRoom {
     private String location;
     public ArrayList<ReservationJavaScript> reservations;
 
-    public FrontendRoom() {
+    private FrontendRoom() {
 
     }
 
@@ -63,7 +63,7 @@ public class FrontendRoom {
         this.reservations = reservations;
     }
 
-    public void update() {
+    private void update() {
         if(this.id > 0) {
             ReadRoomConfig readRoomConfig = new ReadRoomConfig();
             ArrayList<RoomDataModel> roomDataModels = readRoomConfig.GetRoomData();

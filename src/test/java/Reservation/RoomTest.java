@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 class RoomTest {
 
-    Room room = null;
+    private Room room = null;
     ArrayList<Reservation> reservations = new ArrayList<>();
 
     @BeforeEach

@@ -36,7 +36,7 @@ public class CheckOverlap {
         return false;
     }
 
-    public boolean reservationChecker(ArrayList<Reservation> reservations, Reservation reservation) {
+    private boolean reservationChecker(ArrayList<Reservation> reservations, Reservation reservation) {
         boolean overlap = false;
         int reservationCheckerCount = 0;
         for (int i = 0; i < reservations.size(); i++) {

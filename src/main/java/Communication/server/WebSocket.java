@@ -44,6 +44,12 @@ public class WebSocket implements IWebSocket{
     public void onWebSocketConnect(Session session)
     {
         System.out.println("[info] Socket connected but NOT (yet) authenticated: " + session);
+        System.out.println("[info] Socket connected & authenticated: " + session);
+        sessionProvider.addSession(session);
+        websocketSession = session;
+        message.sendReservationDump(session);
+        FrontendSettings frontendSettings = new FrontendSettings();
+        sendTo(session.getId(), frontendSettings);
     }
 
     @OnMessage
@@ -72,7 +78,7 @@ public class WebSocket implements IWebSocket{
         sendToClient(getSessionFromId(sessionId), msg);
     }
 
-    public Session getSessionFromId(String sessionId)
+    private Session getSessionFromId(String sessionId)
     {
 
         for(Session s : sessionProvider.getSessions())

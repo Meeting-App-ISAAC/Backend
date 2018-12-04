@@ -5,7 +5,7 @@ import Settings.FrontendSettings;
 import java.util.Observable;
 import java.util.Observer;
 
-public class SettingsListener implements Observer {
+class SettingsListener implements Observer {
 
     // Listens for changes in the config file
     // Broadcasts updated settings to clients when the config file has changed

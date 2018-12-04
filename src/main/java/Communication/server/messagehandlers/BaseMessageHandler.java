@@ -1,7 +1,7 @@
 package Communication.server.messagehandlers;
 
-public abstract class BaseMessageHandler {
-    String sessionId;
+abstract class BaseMessageHandler {
+    private String sessionId;
 
     BaseMessageHandler(String sessionId){
         this.sessionId = sessionId;

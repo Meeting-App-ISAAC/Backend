@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-public class ReservationsForDayTest {
+class ReservationsForDayTest {
 
-    Room room = new Room();
+    private Room room = new Room();
 
     @BeforeEach
     void setUp() {

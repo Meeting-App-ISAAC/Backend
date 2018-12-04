@@ -9,14 +9,14 @@ import java.util.List;
 
 class UserProfilerTest {
 
-    List<User> users = new ArrayList<>();
-    User user1 = new User();
-    User user2 = new User();
-    User user3 = new User();
-    List<Room> rooms = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
+    private User user1 = new User();
+    private User user2 = new User();
+    private User user3 = new User();
+    private List<Room> rooms = new ArrayList<>();
     User user = new User();
-    Calender calender = null;
-    UserProfiler userProfiler = null;
+    private Calender calender = null;
+    private UserProfiler userProfiler = null;
 
     @BeforeEach
     void setUp(){

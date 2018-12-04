@@ -10,14 +10,14 @@ import java.util.List;
 
 class RoomMemoryTest {
 
-    List<Room> rooms = new ArrayList<>();
-    Room room1 = new Room();
-    Room room2 = new Room();
-    Room room3 = new Room();
-    List<User> users = new ArrayList<>();
-    User user = new User();
-    Calender calender = null;
-    RoomMemory roomMemory = null;
+    private List<Room> rooms = new ArrayList<>();
+    private Room room1 = new Room();
+    private Room room2 = new Room();
+    private Room room3 = new Room();
+    private List<User> users = new ArrayList<>();
+    private User user = new User();
+    private Calender calender = null;
+    private RoomMemory roomMemory = null;
 
     @BeforeEach
     void setUp(){

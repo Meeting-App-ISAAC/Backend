@@ -11,7 +11,7 @@ import java.util.Observer;
 
 public class RoomMemory implements RoomCollection, Observer {
 
-    List<Room> rooms = new ArrayList<>();
+    private List<Room> rooms = new ArrayList<>();
     private  Calender calender;
 
     public RoomMemory(Calender calender){
