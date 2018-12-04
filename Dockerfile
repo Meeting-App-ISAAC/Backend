@@ -1,7 +1,7 @@
 # Get tomcat image with java 10
 FROM tomcat:9.0.13-jre10
 # Set WORKDIR to root
-mkdir app/isaak/
+RUN mkdir app/isaak/
 WORKDIR app/isaak/
 # Copy target jar file into the image
 COPY ./target/*.jar ./app.jar
