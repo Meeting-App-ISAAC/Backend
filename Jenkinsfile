@@ -52,7 +52,7 @@ pipeline {
            steps {
              sh 'docker build -t isaak-backend .'
              sh 'docker rm -f isaak-backend-prod || true'
-             sh 'docker run -d -p 8092:8092 -e --restart always --name isaak-backend-prod isaak-backend'
+             sh 'docker run -d -p 8092:8092 -e --name isaak-backend-prod isaak-backend --restart always '
              sh 'docker image prune -f'
            }
          }
