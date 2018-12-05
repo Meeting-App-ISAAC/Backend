@@ -44,7 +44,7 @@ public class WebSocket implements IWebSocket{
     public void onWebSocketConnect(Session session)
     {
         System.out.println("[info] Socket connected but NOT (yet) authenticated: " + session);
-        onWebSocketText("", session);
+        onWebSocketText("", session); //TODO: REMOVE THIS LINE
     }
 
     @OnMessage
@@ -52,7 +52,7 @@ public class WebSocket implements IWebSocket{
     {
         // Check whether the key received is valid
         AuthenticationChecker authenticationChecker = new AuthenticationChecker();
-        if(authenticationChecker.checkKey(key) || true){
+        if(authenticationChecker.checkKey(key) || true){ //TODO: REMOVE TRUE
             // If so, proceed with sending the client reservations
             System.out.println("[info] Socket connected & authenticated: " + session);
             sessionProvider.addSession(session);
