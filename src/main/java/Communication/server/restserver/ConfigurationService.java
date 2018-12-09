@@ -9,10 +9,7 @@ import RoomConfiguration.ReadRoomConfig;
 import RoomConfiguration.RoomDataModel;
 import com.google.gson.Gson;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +37,19 @@ public class ConfigurationService {
         readRoomConfig.SaveRoomData(roomData);
 
         reply = new Reply(Status.OK, gson.toJson(roomDataResponse));
+        return Response.status(reply.getStatus().getCode())
+                .entity(reply.getMessage()).build();
+    }
+
+    @GET
+    @Path("/roomInfo")
+    public Response getRoomInfo(@QueryParam("key") String input){
+        ReadRoomConfig readRoomConfig = new ReadRoomConfig();
+        RoomDataModel model = readRoomConfig.GetRoomData(input);
+        if(model == null){
+            return Response.status(Status.OK.getCode()).entity("{\"error\" : true}").build();
+        }
+        Reply reply = new Reply(Status.OK, gson.toJson(model));
         return Response.status(reply.getStatus().getCode())
                 .entity(reply.getMessage()).build();
     }

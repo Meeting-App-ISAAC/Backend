@@ -1,5 +1,6 @@
 package RoomConfiguration;
 
+import Reservation.Room;
 import com.google.gson.Gson;
 
 import java.io.*;
@@ -28,6 +29,15 @@ public class ReadRoomConfig {
         }
     }
 
+    public RoomDataModel GetRoomData(String secret){
+        ArrayList<RoomDataModel> all = GetRoomData();
+        for(RoomDataModel item : all){
+            if(item.getSecret().equals(secret)){
+                return item;
+            }
+        }
+        return null;
+    }
 
 
     private String ReadFile(String file) throws IOException {

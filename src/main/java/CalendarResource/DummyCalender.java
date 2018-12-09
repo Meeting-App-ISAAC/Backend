@@ -3,10 +3,13 @@ package CalendarResource;
 import Reservation.Reservation;
 import Reservation.Room;
 import Reservation.User;
+import RoomConfiguration.ReadRoomConfig;
+import RoomConfiguration.RoomDataModel;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class DummyCalender implements Calender {
 
@@ -22,15 +25,23 @@ public class DummyCalender implements Calender {
 
     @Override
     public List<Room> getRooms() {
-        User user = new User(1, "Alex");
-        Reservation reservation = new Reservation(1, user, false,  LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusMinutes(60));
-        ArrayList<Reservation> reservations = new ArrayList<Reservation>();
-        reservations.add(reservation);
+
+        ReadRoomConfig readRoomConfig = new ReadRoomConfig();
         ArrayList<Room> rooms = new ArrayList<Room>();
-        Room room = new Room(1, "DummyRoom", reservations);
-        Room room1 = new Room(2, "Carlo's kamer", new ArrayList<>());
-        rooms.add(room);
-        rooms.add(room1);
+        List<User> users = getUsers();
+        int idcounter = 1;
+
+        for(RoomDataModel roomData : readRoomConfig.GetRoomData()){
+            Random random = new Random();
+            User user = users.get(random.nextInt(4));
+            int start = 15 * random.nextInt(15);
+            Reservation reservation = new Reservation(idcounter++, user, false,  LocalDateTime.now().plusMinutes(start), LocalDateTime.now().plusMinutes(start + random.nextInt(120)));
+
+            ArrayList<Reservation> reservations = new ArrayList<Reservation>();
+            reservations.add(reservation);
+            Room room = new Room(roomData.getId(), roomData.getName(), reservations);
+            rooms.add(room);
+        }
         return rooms;
     }
 
@@ -42,7 +53,6 @@ public class DummyCalender implements Calender {
         users.add(new User(3, "Joeri"));
         users.add(new User(4, "Yorick"));
         users.add(new User(5, "Tobias"));
-
         return users;
     }
 }
