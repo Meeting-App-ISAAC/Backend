@@ -5,7 +5,9 @@ import javax.websocket.Session;
 import java.util.Observable;
 import java.util.Observer;
 
-public class RoomListener implements Observer {
+class RoomListener implements Observer {
+
+    // Listens for changes in a room
 
     private IMessageSender messageSender = new MessageSender();
 

@@ -1,8 +1,8 @@
 package Communication.server.restserver.responseModels;
 
 public class RoomDataResponse {
-    String secret;
-    int id;
+    private String secret;
+    private int id;
 
     public String getSecret() {
         return secret;

@@ -1,11 +1,11 @@
 package RoomConfiguration;
 
 public class RoomDataModel {
-    String secret;
-    int id;
-    int capacity;
-    String name;
-    String location;
+    private String secret;
+    private int id;
+    private int capacity;
+    private String name;
+    private String location;
 
     public String getSecret() {
         return secret;

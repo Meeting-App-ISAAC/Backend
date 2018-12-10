@@ -1,6 +1,6 @@
 package Reservation;
 
-public class ChangedObject {
+class ChangedObject {
 
     private Changed changed;
     private Object arg;

@@ -1,6 +1,7 @@
 package Communication.server;
 
 import Communication.ReservationProvider;
+import Authentication.AuthenticationChecker;
 import Communication.server.restserver.ConfigurationService;
 import Communication.server.restserver.ReservationService;
 import Reservation.Room;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Timer;
 
-public class Server {
+class Server {
     public static void main(String[] args)
     {
 
@@ -55,6 +56,10 @@ public class Server {
             timer.schedule(new SettingsWatcher(new File("target/classes/config.properties")),0,1000);
         }
 
+        // Broadcast reservations on new day
+        Timer timer = new Timer();
+        timer.schedule(new UtilTimerTask(LocalDateTime.now()),0,60000);
+
         org.eclipse.jetty.server.Server server = new org.eclipse.jetty.server.Server();
         ServerConnector connector = new ServerConnector(server);
         try {
@@ -78,7 +83,7 @@ public class Server {
         cors.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
         cors.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
         cors.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,POST,HEAD,OPTIONS");
-        cors.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin");
+        cors.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin,Authorization");
         server.setHandler(context);
 
         ServletHolder jerseyServlet =
@@ -86,7 +91,7 @@ public class Server {
         jerseyServlet.setInitOrder(0);
         // Tells the Jersey Servlet which REST service/class to load.
         jerseyServlet.setInitParameter("jersey.config.server.provider.classnames",
-                "" + ReservationService.class.getCanonicalName() + ";" + ConfigurationService.class.getCanonicalName() + "");
+                "" + ReservationService.class.getCanonicalName() + ";" + ConfigurationService.class.getCanonicalName() + ";" + AuthenticationChecker.class.getCanonicalName() + "");
 
         try
         {

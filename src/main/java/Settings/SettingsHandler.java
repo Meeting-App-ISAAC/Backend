@@ -8,6 +8,8 @@ import java.util.Properties;
 
 public class SettingsHandler extends Observable {
 
+    // Utility class handling reading from the config file
+
     private SettingsHandler(){}
     private static SettingsHandler instance;
     public static SettingsHandler Instance() {

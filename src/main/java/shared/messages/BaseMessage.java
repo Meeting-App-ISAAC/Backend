@@ -1,4 +1,4 @@
 package shared.messages;
 
-public class BaseMessage {
+class BaseMessage {
     }

@@ -1,24 +1,25 @@
 package Communication.server.models;
 
 import Communication.ReservationProvider;
-import Reservation.Reservation;
 import RoomConfiguration.ReadRoomConfig;
 import RoomConfiguration.RoomDataModel;
 import Reservation.RoomCollection;
 import Reservation.Room;
-import Reservation.RoomMemory;
 
 import java.util.ArrayList;
 
 public class FrontendRoom {
 
+    // Model describing a room as it is defined within the frontend application
+    // Rooms should be converted into this class before being sent to clients
+
     private int id;
     private int capacity;
     private String name;
     private String location;
-    private ArrayList<ReservationJavaScript> reservations;
+    public ArrayList<ReservationJavaScript> reservations;
 
-    public FrontendRoom() {
+    private FrontendRoom() {
 
     }
 
@@ -58,9 +59,11 @@ public class FrontendRoom {
         return reservations;
     }
 
+    public void setReservations(ArrayList<ReservationJavaScript> reservations) {
+        this.reservations = reservations;
+    }
 
-
-    public void update() {
+    private void update() {
         if(this.id > 0) {
             ReadRoomConfig readRoomConfig = new ReadRoomConfig();
             ArrayList<RoomDataModel> roomDataModels = readRoomConfig.GetRoomData();

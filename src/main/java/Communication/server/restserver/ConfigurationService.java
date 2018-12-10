@@ -1,41 +1,38 @@
 package Communication.server.restserver;
 
-import Communication.ReservationProvider;
+import Authentication.KeyGenerator;
+import Authentication.Secured;
 import Communication.server.restserver.response.Reply;
 import Communication.server.restserver.response.Status;
 import Communication.server.restserver.responseModels.RoomDataResponse;
-import Reservation.Room;
-import Reservation.RoomCollection;
 import RoomConfiguration.ReadRoomConfig;
 import RoomConfiguration.RoomDataModel;
 import com.google.gson.Gson;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 @Path("/config")
 public class ConfigurationService {
-    Gson gson = new Gson();
-    ReadRoomConfig readRoomConfig = new ReadRoomConfig();
+    private Gson gson = new Gson();
+    private ReadRoomConfig readRoomConfig = new ReadRoomConfig();
 
 
     @GET
     @Path("/secret")
     public Response getSecret() {
         Reply reply = null;
+        KeyGenerator keyGenerator = new KeyGenerator();
+        String key = keyGenerator.randomString(100);
         ArrayList<RoomDataModel> roomData = readRoomConfig.GetRoomData();
         RoomDataModel roomDataModel = new RoomDataModel();
         roomDataModel.setId(roomData.size() + 1);
-        roomDataModel.setSecret("test");
+        roomDataModel.setSecret(key);
         RoomDataResponse roomDataResponse = new RoomDataResponse();
         roomDataResponse.setId(roomData.size() + 1);
-        roomDataResponse.setSecret("test");
+        roomDataResponse.setSecret(key);
         roomData.add(roomDataModel);
         readRoomConfig.SaveRoomData(roomData);
 
@@ -45,15 +42,31 @@ public class ConfigurationService {
     }
 
     @GET
+    @Path("/roomInfo")
+    public Response getRoomInfo(@QueryParam("key") String input){
+        ReadRoomConfig readRoomConfig = new ReadRoomConfig();
+        RoomDataModel model = readRoomConfig.GetRoomData(input);
+        if(model == null){
+            return Response.status(Status.OK.getCode()).entity("{\"error\" : true}").build();
+        }
+        Reply reply = new Reply(Status.OK, gson.toJson(model));
+        return Response.status(reply.getStatus().getCode())
+                .entity(reply.getMessage()).build();
+    }
+
+    @GET
+    @Secured
     @Path("/rooms")
     public Response getRooms() {
+        ReadRoomConfig readRoomConfig = new ReadRoomConfig();
         Reply reply = null;
-        RoomCollection collection = ReservationProvider.getInstance().getCollection();
-        List<Room> rooms = new ArrayList<Room>();
-        for (Room room: collection.getAllRooms()){
-            Room tempRoom = new Room();
-            tempRoom.setId(room.getId());
-            tempRoom.setName(room.getName());
+        List<RoomDataModel> rooms = new ArrayList<>();
+        for (RoomDataModel roomDataModel : readRoomConfig.GetRoomData()){
+            RoomDataModel tempRoom = new RoomDataModel();
+            tempRoom.setId(roomDataModel.getId());
+            tempRoom.setName(roomDataModel.getName());
+            tempRoom.setLocation(roomDataModel.getLocation());
+            tempRoom.setCapacity(roomDataModel.getCapacity());
             rooms.add(tempRoom);
         }
         reply = new Reply(Status.OK, gson.toJson(rooms));
@@ -62,6 +75,7 @@ public class ConfigurationService {
     }
 
     @POST
+    @Secured
     @Consumes("application/json")
     @Path("/createroom")
     public Response CreateRoom(String data) {

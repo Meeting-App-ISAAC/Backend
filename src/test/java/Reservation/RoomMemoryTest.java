@@ -2,26 +2,22 @@ package Reservation;
 
 import CalendarResource.Calender;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class RoomMemoryTest {
 
-    List<Room> rooms = new ArrayList<>();
-    Room room1 = new Room();
-    Room room2 = new Room();
-    Room room3 = new Room();
-    List<User> users = new ArrayList<>();
-    User user = new User();
-    Calender calender = null;
-    RoomMemory roomMemory = null;
+    private List<Room> rooms = new ArrayList<>();
+    private Room room1 = new Room();
+    private Room room2 = new Room();
+    private Room room3 = new Room();
+    private List<User> users = new ArrayList<>();
+    private User user = new User();
+    private Calender calender = null;
+    private RoomMemory roomMemory = null;
 
     @BeforeEach
     void setUp(){
@@ -81,6 +77,11 @@ class RoomMemoryTest {
 
         // Assert if getAllRooms returns all rooms from roomMemory
         Assert.assertEquals(rooms, roomMemory.getAllRooms());
+    }
+
+    @Test
+    void calenderRoomsSize() {
+        Assert.assertEquals(rooms.size(), calender.getRooms().size());
     }
 
     @Test

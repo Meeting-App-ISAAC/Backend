@@ -15,7 +15,7 @@ import java.util.TimerTask;
 
 // This class checks for reservations that should have started but haven't been
 
-public class ReservationTimer extends TimerTask {
+class ReservationTimer extends TimerTask {
 
     private List<Reservation> reservations;
 
