@@ -26,6 +26,7 @@ pipeline {
     stage('Build') {
       steps {
         sh 'mvn clean install -B -DskipTests'
+		sh 'mvn package'
       }
     }
     stage('Test') {
@@ -45,7 +46,7 @@ pipeline {
            steps {
              sh 'docker build -t isaak-backend .'
              sh 'docker rm -f isaak-backend || true'
-             sh 'docker run -d -p 8092:8092 --name isaak-backend isaak-backend'
+             sh 'docker run -d -p 8090:8090 --name isaak-backend isaak-backend'
              sh 'docker image prune -f'
            }
          }
