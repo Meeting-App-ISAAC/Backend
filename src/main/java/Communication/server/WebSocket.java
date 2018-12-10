@@ -1,20 +1,15 @@
 package Communication.server;
 
 import CalendarResource.Calender;
-import CalendarResource.DummyCalender;
 import Communication.ReservationProvider;
 import Communication.SessionProvider;
-import Communication.server.models.ReservationJavaScript;
-import Reservation.Room;
+import Authentication.AuthenticationChecker;
 import Reservation.RoomCollection;
-import Reservation.RoomMemory;
 import Settings.FrontendSettings;
 import Settings.SettingsHandler;
 import com.google.gson.Gson;
-import org.eclipse.persistence.sessions.factories.SessionManager;
 import shared.EncapsulatingMessageGenerator;
 import shared.IEncapsulatingMessageGenerator;
-import shared.messages.ReservationsRequest;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
@@ -29,6 +24,7 @@ public class WebSocket implements IWebSocket{
     private MessageToObjectServer messageToObjectServer;
     private IEncapsulatingMessageGenerator messageGenerator;
     private Session websocketSession;
+    private IMessageSender message = new MessageSender();
 
     private Calender calender;
     private RoomCollection rooms;
@@ -47,30 +43,28 @@ public class WebSocket implements IWebSocket{
     @OnOpen
     public void onWebSocketConnect(Session session)
     {
-        System.out.println("Socket Connected: " + session);
-
-        sessionProvider.addSession(session);
-        websocketSession = session;
-        IMessageSender message = new MessageSender();
-        message.sendReservationDump(session);
-        FrontendSettings frontendSettings = new FrontendSettings();
-        sendTo(session.getId(),frontendSettings);
+        System.out.println("[info] Socket connected but NOT (yet) authenticated: " + session);
     }
 
     @OnMessage
-    public void onWebSocketText(String message, Session session)
+    public void onWebSocketText(String key, Session session)
     {
-    }
-
-
-    private void addRoomToListener(Session session, Room room) {
-        for (RoomListener roomListener : listener) {
-            if(roomListener.getSession().equals(session)){
-                roomListener.setRoom(room);
-                return;
-            }
+        // Check whether the key received is valid
+        AuthenticationChecker authenticationChecker = new AuthenticationChecker();
+        if(authenticationChecker.checkKey(key)){
+            // If so, proceed with sending the client reservations
+            System.out.println("[info] Socket connected & authenticated: " + session);
+            sessionProvider.addSession(session);
+            websocketSession = session;
+            message.sendReservationDump(session);
+            FrontendSettings frontendSettings = new FrontendSettings();
+            sendTo(session.getId(), frontendSettings);
+        }
+        else {
+            System.out.println("[info] Connection " + session + " refused, invalid key");
         }
     }
+
 
     public void sendTo(String sessionId, Object object)
     {
@@ -78,7 +72,7 @@ public class WebSocket implements IWebSocket{
         sendToClient(getSessionFromId(sessionId), msg);
     }
 
-    public Session getSessionFromId(String sessionId)
+    private Session getSessionFromId(String sessionId)
     {
 
         for(Session s : sessionProvider.getSessions())
@@ -101,7 +95,6 @@ public class WebSocket implements IWebSocket{
     {
         try {
             session.getBasicRemote().sendText(message);
-            System.out.println("Send " + message);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -113,7 +106,7 @@ public class WebSocket implements IWebSocket{
     public void onWebSocketClose(CloseReason reason)
     {
         sessionProvider.removeSession(websocketSession);
-        System.out.println("Socket Closed: " + reason);
+        System.out.println("[info] Socket Closed: " + reason);
     }
 
     @OnError

@@ -4,6 +4,8 @@ import java.io.IOException;
 
 public class FrontendSettings {
 
+    // Set of settings that are retrieved from the config file and sent to the clients
+
     private String type = "settings";
     private boolean reservationStartEnabled;
     private boolean reservationStopEnabled;

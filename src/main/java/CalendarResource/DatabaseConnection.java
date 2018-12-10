@@ -1,4 +1,4 @@
 package CalendarResource;
 
-public class DatabaseConnection {
+class DatabaseConnection {
 }
