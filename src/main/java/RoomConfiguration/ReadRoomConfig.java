@@ -1,32 +1,31 @@
 package RoomConfiguration;
 
-import Reservation.Room;
+
 import com.google.gson.Gson;
 
+
 import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class ReadRoomConfig {
     private Gson gson = new Gson();
 
     public ArrayList<RoomDataModel> GetRoomData(){
-        String data = null;
-        File f = new File("target/classes/roomdata.txt");
-        if(f.isFile()) {
-        try {
-            data = ReadFile("target/classes/roomdata.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        RoomDataModel[] roomData = gson.fromJson(data, RoomDataModel[].class);
-        return new ArrayList<>(Arrays.asList(roomData));
 
-        } else {
+        try {
+            String data = ReadFile();
+            RoomDataModel[] roomData = gson.fromJson(data, RoomDataModel[].class);
+            return new ArrayList<>(Arrays.asList(roomData));
+        } catch (Exception e) {
+            e.printStackTrace();
             return new ArrayList<>();
         }
+
     }
 
     public RoomDataModel GetRoomData(String secret){
@@ -40,11 +39,20 @@ public class ReadRoomConfig {
     }
 
 
-    private String ReadFile(String file) throws IOException {
-        return new Scanner(new File(file)).useDelimiter("\\Z").next();
+    private String cached;
+    private String ReadFile() throws IOException, URISyntaxException {
+        if(cached != null){
+            return cached;
+        }
+        InputStream in = getClass().getResourceAsStream("/roomdata.txt");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        cached = reader.lines().collect(Collectors.joining());
+        return cached;
     }
 
-    public void SaveRoomData(ArrayList<RoomDataModel> roomData){
+    public void SaveRoomData(ArrayList<RoomDataModel> roomData) {
+
+        /*
         File f = new File("target/classes/roomdata.txt");
         if(f.isFile()) {
             try (PrintWriter out = new PrintWriter(f)) {
@@ -62,6 +70,7 @@ public class ReadRoomConfig {
                 e.printStackTrace();
             }
         }
+        */
     }
 
 }

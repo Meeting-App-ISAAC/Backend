@@ -2,34 +2,36 @@ package AdminConfiguration;
 
 import com.google.gson.Gson;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
+import java.net.URISyntaxException;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class ReadAdminConfig {
 
-        private Gson gson = new Gson();
-
-        public String GetAdminData() {
-            String data = null;
-            File f = new File("target/classes/admin.txt");
-            if (f.isFile()) {
-                try {
-                    data = ReadFile("target/classes/admin.txt");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                String key = data;
-                return key;
-
-            } else {
-                return "";
-            }
+    private Gson gson = new Gson();
+    private String cached;
+    public String GetAdminData() {
+        try {
+            return ReadFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
         }
+    }
 
-
-        private String ReadFile(String file) throws IOException {
-            return new Scanner(new File(file)).useDelimiter("\\Z").next();
+    public boolean CheckAdminPass(String original){
+        return GetAdminData().equals(original);
+    }
+    private String ReadFile() throws IOException, URISyntaxException {
+        if(cached != null){
+            return cached;
         }
+        InputStream in = getClass().getResourceAsStream("/admin.txt");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        cached = reader.lines().collect(Collectors.joining());
+        return cached;
+    }
+
 }
