@@ -1,5 +1,6 @@
 package Authentication;
 
+import AdminConfiguration.ReadAdminConfig;
 import Communication.server.restserver.response.Reply;
 import Communication.server.restserver.response.Status;
 import RoomConfiguration.ReadRoomConfig;
@@ -66,8 +67,9 @@ public class AuthenticationChecker implements ContainerRequestFilter {
     //Check key and perform actions
     public boolean checkKey(String key) {
         ReadRoomConfig readRoomConfig = new ReadRoomConfig();
+        ReadAdminConfig readAdminConfig = new ReadAdminConfig();
         for (RoomDataModel roomDataModel : readRoomConfig.GetRoomData()){
-            if (roomDataModel.getSecret().equals(key)) {
+            if (roomDataModel.getSecret().equals(key) || key.equals(readAdminConfig.GetAdminData())) {
                 return true;
             }
         }
