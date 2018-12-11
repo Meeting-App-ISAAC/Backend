@@ -34,7 +34,7 @@ public class DummyCalender implements Calender {
         for(RoomDataModel roomData : readRoomConfig.GetRoomData()){
             Random random = new Random();
             User user = users.get(random.nextInt(4));
-            int start = 15 * random.nextInt(15);
+            int start = 31;
             Reservation reservation = new Reservation(idcounter++, user, false,  LocalDateTime.now().plusMinutes(start), LocalDateTime.now().plusMinutes(start + random.nextInt(120)));
 
             ArrayList<Reservation> reservations = new ArrayList<Reservation>();

@@ -1,5 +1,6 @@
 package Communication.server.restserver;
 
+import AdminConfiguration.ReadAdminConfig;
 import Authentication.KeyGenerator;
 import Authentication.Secured;
 import Communication.server.restserver.response.Reply;
@@ -52,6 +53,17 @@ public class ConfigurationService {
         Reply reply = new Reply(Status.OK, gson.toJson(model));
         return Response.status(reply.getStatus().getCode())
                 .entity(reply.getMessage()).build();
+    }
+
+    @GET
+    @Path("/adminInfo")
+    public Response getAdminInfo(@QueryParam("pass") String pass){
+        ReadAdminConfig readAdminConfig = new ReadAdminConfig();
+
+        if(readAdminConfig.CheckAdminPass(pass)){
+            return Response.status(Status.OK.getCode()).entity("{\"pass\" : true}").build();
+        }
+        return Response.status(Status.OK.getCode()).entity("{\"error\" : true}").build();
     }
 
     @GET

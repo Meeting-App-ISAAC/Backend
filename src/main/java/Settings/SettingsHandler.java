@@ -1,10 +1,10 @@
 package Settings;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.util.Observable;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class SettingsHandler extends Observable {
 
@@ -20,8 +20,10 @@ public class SettingsHandler extends Observable {
     }
     private static Properties properties() throws IOException {
         Properties properties = new Properties();
-        InputStream inputStream = new FileInputStream("target/classes/config.properties");
-        properties.load(inputStream);
+
+        InputStream in = SettingsHandler.class.getResourceAsStream("/config.properties");
+
+        properties.load(in);
         return properties;
     }
 
