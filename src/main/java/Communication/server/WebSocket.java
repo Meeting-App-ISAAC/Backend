@@ -60,6 +60,13 @@ public class WebSocket implements IWebSocket{
         }
         else {
             System.out.println("[info] Connection " + session + " refused, invalid key");
+            sendToClient(session,"Error: invalid key");
+            try {
+                session.close();
+            }
+            catch (IOException e) {
+                System.out.println("[error] Could not close session nr. " + session.getId());
+            }
         }
     }
 
