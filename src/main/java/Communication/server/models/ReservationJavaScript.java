@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class ReservationJavaScript {
 
-    // Model describing a reservation as it is defined within the frontend application
+    // models describing a reservation as it is defined within the frontend application
     // Reservations should be converted into this class before being sent to the client
 
     private int id;

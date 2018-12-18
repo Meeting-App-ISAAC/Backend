@@ -4,7 +4,9 @@ import Reservation.Reservation;
 import Reservation.Room;
 import Reservation.User;
 import RoomConfiguration.RoomConfig;
+import RoomConfiguration.RoomDataModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExchangeCalendar implements Calender {
@@ -23,6 +25,11 @@ public class ExchangeCalendar implements Calender {
 
     @Override
     public List<Room> getRooms() {
+        ArrayList<String> emails = new ArrayList<>();
+        for (RoomDataModel roomDataModel : config.GetRoomData()) {
+            emails.add(roomDataModel.getEmail());
+        }
+
         return null;
     }
 
