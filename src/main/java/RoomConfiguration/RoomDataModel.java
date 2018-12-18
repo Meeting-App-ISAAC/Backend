@@ -3,9 +3,18 @@ package RoomConfiguration;
 public class RoomDataModel {
     private String secret;
     private int id;
+    private String email;
     private int capacity;
     private String name;
     private String location;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getSecret() {
         return secret;

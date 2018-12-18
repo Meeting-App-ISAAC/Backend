@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-public class ReadRoomConfig {
+public class ReadRoomConfig implements RoomConfig {
     private Gson gson = new Gson();
 
     public ArrayList<RoomDataModel> GetRoomData(){
@@ -50,6 +50,7 @@ public class ReadRoomConfig {
         return cached;
     }
 
+    @Override
     public void SaveRoomData(ArrayList<RoomDataModel> roomData) {
 
         /*
