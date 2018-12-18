@@ -23,7 +23,6 @@ public class WebSocket implements IWebSocket{
     private Gson gson = new Gson();
     private MessageToObjectServer messageToObjectServer;
     private IEncapsulatingMessageGenerator messageGenerator;
-    private Session websocketSession;
     private IMessageSender message = new MessageSender();
 
     private Calender calender;
@@ -55,7 +54,6 @@ public class WebSocket implements IWebSocket{
             // If so, proceed with sending the client reservations
             System.out.println("[info] Socket connected & authenticated: " + session);
             sessionProvider.addSession(session);
-            websocketSession = session;
             message.sendReservationDump(session);
             FrontendSettings frontendSettings = new FrontendSettings();
             sendTo(session.getId(), frontendSettings);
@@ -105,7 +103,6 @@ public class WebSocket implements IWebSocket{
     @OnClose
     public void onWebSocketClose(CloseReason reason)
     {
-        sessionProvider.removeSession(websocketSession);
         System.out.println("[info] Socket Closed: " + reason);
     }
 
