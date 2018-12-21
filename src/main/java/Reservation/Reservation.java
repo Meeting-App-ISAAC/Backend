@@ -6,22 +6,47 @@ import java.util.Observable;
 public class Reservation extends Observable {
 
     private int id;
-    private User user;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    private String title;
     private Boolean hasStarted;
 
+    private String uuid;
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
     private LocalDateTime start;
     private LocalDateTime end;
 
     public Reservation(User user,LocalDateTime start,LocalDateTime end) {
-        this.user = user;
+        this.start = start;
+        this.end = end;
+        this.title = user.getName();
+    }
+
+    public Reservation(int id, String title, boolean hasStarted, LocalDateTime start, LocalDateTime end){
+        this.id = id;
+        this.title = title;
+        this.hasStarted = hasStarted;
         this.start = start;
         this.end = end;
     }
-
     public Reservation(int id, User user, boolean hasStarted, LocalDateTime start, LocalDateTime end){
         this.id = id;
-        this.user = user;
+        this.title = user.getName();
         this.hasStarted = hasStarted;
         this.start = start;
         this.end = end;
@@ -33,14 +58,6 @@ public class Reservation extends Observable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public LocalDateTime getStart() {

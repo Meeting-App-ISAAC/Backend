@@ -14,6 +14,7 @@ public interface Calender {
      */
     void createNewEvent(Reservation reservation);
 
+    void Reload();
     void updateEvent(Reservation reservation);
 
     List<Room> getRooms();

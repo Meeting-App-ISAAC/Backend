@@ -64,7 +64,7 @@ public class ReservationJavaScript {
         for (Reservation reservation : reservations) {
             ReservationJavaScript temp = new ReservationJavaScript();
             temp.id = reservation.getId();
-            temp.title = reservation.getUser().getName();
+            temp.title = reservation.getTitle();
             temp.length = (double) Math.round((double) (reservation.getEnd().atZone(ZoneId.systemDefault())
                     .toInstant().toEpochMilli() - reservation.getStart().atZone(ZoneId.systemDefault())
                     .toInstant().toEpochMilli()) / 3600) / 1000;

@@ -5,5 +5,6 @@ public enum Changed {
     StartedMeeting,
     AddedReservation,
     ExtendedMeeting,
+    CalendarUpdate,
     ;
 }

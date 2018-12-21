@@ -48,6 +48,7 @@ class ReservationTimer extends TimerTask {
 
     // Refreshes the list of all reservations with those in the ReservationProvider
     private void refreshReservations() {
+        ReservationProvider.getInstance().Reload();
         RoomCollection roomCollection = ReservationProvider.getInstance().getCollection();
         List<Room> rooms = roomCollection.getAllRooms();
         for(Room r : rooms) {

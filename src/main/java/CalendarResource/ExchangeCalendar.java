@@ -16,21 +16,88 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import java.util.*;
+import Reservation.Changed;
 public class ExchangeCalendar implements Calender {
 
 
     private RoomConfig config;
     private BearerProvider bearerProvider = new BearerProvider(new ReadClientConfig());
     private Gson gson = new Gson();
+    private ArrayList<Room> rooms = new ArrayList<Room>();
+
+    private int userId = 1;
+    private int reservationId = 1;
 
     public ExchangeCalendar(RoomConfig config) {
         this.config = config;
+        for(RoomDataModel roomData : config.GetRoomData()){
+            ArrayList<Reservation> reservations = new ArrayList<Reservation>();
+            Room room = new Room(roomData.getId(), roomData.getName(), reservations);
+            rooms.add(room);
+        }
+    }
+
+
+    private Room GetRoomById(int id){
+        for(Room room : rooms){
+            if(room.getId() == id){
+                return room;
+            }
+        }
+        return null;
+    }
+
+    private Reservation GetReservationByUUID(ArrayList<Reservation> reservations, String UUID){
+        for (Reservation reservation : reservations) {
+            if(reservation.getUuid().equals(UUID)){
+                return reservation;
+            }
+        }
+        return null;
+    }
+
+    private void ModifyRoomReservations(Room room, ArrayList<Reservation> newReservations){
+
+        boolean roomchanged = false;
+        for (Reservation newReservation : newReservations) {
+            Reservation old = GetReservationByUUID(room.getReservations(), newReservation.getUuid());
+
+            //reservation already exists
+            if(old != null){
+                boolean changed = false;
+                if(!old.getTitle().equals(newReservation.getTitle())){
+                    old.setTitle(newReservation.getTitle());
+                    changed = true;
+                }
+                if(!old.getStart().equals(newReservation.getStart())){
+                    old.setStart(newReservation.getStart());
+                    changed = true;
+                }
+                if(!old.getEnd().equals(newReservation.getEnd())){
+                    old.setStart(newReservation.getEnd());
+                    changed = true;
+                }
+                if(changed){
+                    roomchanged = true;
+                    old.Changed(Changed.CalendarUpdate);
+                }
+                continue;
+            }
+            roomchanged = true;
+            room.addReservation(newReservation);
+
+        }
+        for (Reservation reservation : room.getReservations()) {
+            if(GetReservationByUUID(newReservations, reservation.getUuid()) == null){
+                room.removeReservation(reservation);
+                roomchanged = true;
+            }
+        }
+        room.roomChanged(Changed.CalendarUpdate);
     }
 
     @Override
@@ -38,25 +105,24 @@ public class ExchangeCalendar implements Calender {
 
     }
 
+    @Override
+    public void Reload() {
+        getRooms();
+    }
+
     public static void main(String[] args){
         new ExchangeCalendar(new ReadRoomConfig()).getRooms();
-
-
     }
     @Override
     public List<Room> getRooms() {
-        ArrayList<String> emails = new ArrayList<>();
-
-
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String start = (LocalDateTime.now().format(formatter)) + "T00:00:00";
         String end = (LocalDateTime.now().plusDays(1).format(formatter)) + "T00:00:00";
-        ExchangeCalendar.RequestContainer container = new ExchangeCalendar.RequestContainer();
+        RequestContainer container = new RequestContainer();
 
         for (RoomDataModel roomDataModel : config.GetRoomData()) {
             if (roomDataModel.getEmail() != null && !roomDataModel.getEmail().isEmpty()) {
-                ExchangeCalendar.RequestModel model = new ExchangeCalendar.RequestModel();
+                RequestModel model = new RequestModel();
                 model.id = roomDataModel.getId();
                 model.url = "/users/" + roomDataModel.getEmail() + "/calendarview?startDatetime=" + start + "&endDatetime=" + end;
                 container.requests.add(model);
@@ -75,36 +141,41 @@ public class ExchangeCalendar implements Calender {
             JSONArray responses = (JSONArray) jo.get("responses");
             Iterator<JSONObject> iterator = responses.iterator();
             while (iterator.hasNext()){
-                Room room = new Room();
 
                 JSONObject roomIterator = iterator.next();
-                room.setId(Integer.parseInt(roomIterator.get("id").toString()));
+                Room room = GetRoomById(Integer.parseInt(roomIterator.get("id").toString()));
 
 
                 JSONObject body = (JSONObject) roomIterator.get("body");
                 JSONArray value = (JSONArray) body.get("value");
                 Iterator<JSONObject> valueIterator = value.iterator();
+
+                ArrayList<Reservation> reservations = new ArrayList<Reservation>();
+
                 while (valueIterator.hasNext()){
                     JSONObject next = valueIterator.next();
-                    JSONObject startTime =  (JSONObject) next.get("start");
-                    System.out.println(startTime.get("dateTime"));
-                    System.out.println(startTime.get("timeZone"));
-                    JSONObject endTime =  (JSONObject) next.get("end");
-                    System.out.println(endTime.get("dateTime"));
-                    System.out.println(endTime.get("timeZone"));
                     JSONObject organizer = (JSONObject) next.get("organizer");
-                    JSONObject orgEmail = (JSONObject) organizer.get("emailAddress");
-                    System.out.println(orgEmail.get("name"));
-
-
-
+                    JSONObject emailAddress = (JSONObject) organizer.get("emailAddress");
+                    Reservation reservation = new Reservation(reservationId++,emailAddress.get("name").toString(),false,ParseTime((JSONObject) next.get("start")), ParseTime((JSONObject) next.get("end")));
+                    reservation.setUuid(next.get("iCalUId").toString());
+                    reservations.add(reservation);
                 }
+
+                ModifyRoomReservations(room, reservations);
             }
         } catch (UnirestException | ParseException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return rooms;
+    }
+
+    private LocalDateTime ParseTime(JSONObject time){
+        System.out.println();
+        System.out.println(time.get("timeZone"));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+        return LocalDateTime.parse(time.get("dateTime").toString(), formatter);
     }
 
 
@@ -125,8 +196,54 @@ public class ExchangeCalendar implements Calender {
         public String url = "";
     }
 
+    private List<User> cachedUsers = new ArrayList<User>();
     @Override
     public List<User> getUsers() {
+        ArrayList<User> users = new ArrayList<User>();
+        String result = null;
+        try {
+            result = Unirest.get("https://graph.microsoft.com/v1.0/users/")
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + bearerProvider.getBearer())
+                    .asString().getBody();
+
+            JSONObject jo = null;
+
+            jo = (JSONObject) (new JSONParser()).parse(result);
+            JSONArray responses = (JSONArray) jo.get("value");
+            Iterator<JSONObject> iterator = responses.iterator();
+            while (iterator.hasNext()) {
+                JSONObject user = (JSONObject) iterator.next();
+                if (!UserExists(user.get("id").toString())) {
+                    User newUser = new User(userId++, user.get("displayName").toString());
+                    newUser.setUid(user.get("id").toString());
+                    newUser.setEmail((user.get("mail") == null? null : user.get("mail").toString()));
+                    cachedUsers.add(newUser);
+                }
+            }
+
+
+        }catch (UnirestException | ParseException e) {
+            e.printStackTrace();
+        }
+        return cachedUsers;
+    }
+
+    private boolean UserExists(String uid){
+        for (User cachedUser : this.cachedUsers) {
+            if(cachedUser.getUid().equals(uid)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private User GetUserByEmail(String email){
+        for (User cachedUser : this.cachedUsers) {
+            if(cachedUser.getEmail().equals(email)){
+                return cachedUser;
+            }
+        }
         return null;
     }
 
