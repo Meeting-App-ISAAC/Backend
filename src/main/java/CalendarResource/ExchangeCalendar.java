@@ -2,6 +2,9 @@ package CalendarResource;
 
 import AdminConfiguration.ReadClientConfig;
 import CalendarResource.ExchangeCommunication.BearerProvider;
+import CalendarResource.ExchangeCommunication.ReservationModels.Attendee;
+import CalendarResource.ExchangeCommunication.ReservationModels.ReservationModel;
+import Communication.ReservationProvider;
 import Reservation.Reservation;
 import Reservation.Room;
 import Reservation.User;
@@ -16,7 +19,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -65,7 +67,6 @@ public class ExchangeCalendar implements Calender {
         boolean roomchanged = false;
         for (Reservation newReservation : newReservations) {
             Reservation old = GetReservationByUUID(room.getReservations(), newReservation.getUuid());
-
             //reservation already exists
             if(old != null){
                 boolean changed = false;
@@ -101,8 +102,51 @@ public class ExchangeCalendar implements Calender {
     }
 
     @Override
-    public void createNewEvent(Reservation reservation) {
+    public void createNewEvent(Reservation reservation){
+        ReservationModel reservationModel = new ReservationModel();
+        int roomId = 0;
+        ReservationProvider reservationProvider = ReservationProvider.getInstance();
+        for (Room room : reservationProvider.getCollection().getAllRooms()){
+            for (Reservation reservationTemp : room.getReservations()){
+                if (reservationTemp.getId() == reservation.getId()){
+                    roomId = room.getId();
+                }
+            }
+        }
+        String roomEmail = "";
+        for (RoomDataModel roomDataModel : config.GetRoomData()) {
+            if (roomDataModel.getId() == roomId) {
+                roomEmail = roomDataModel.getEmail();
+                reservationModel.setSubject(reservation.getTitle());
+                reservationModel.getBody().setContentType("HTML");
+                reservationModel.getBody().setContent("Automatic room reservation");
+                reservationModel.getStart().setDateTime(reservation.getStart().toString());
+                reservationModel.getStart().setTimeZone("Europe/Amsterdam");
+                reservationModel.getEnd().setDateTime(reservation.getEnd().toString());
+                reservationModel.getEnd().setTimeZone("Europe/Amsterdam");
+                reservationModel.getLocation().setDisplayName(roomDataModel.getLocation());
+                ArrayList<Attendee> attendees = new ArrayList<>();
+                Attendee attendee = new Attendee();
+                attendee.getEmailAddress().setAddress("Fontysgroup2@isaacfontys.onmicrosoft.com");
+                attendee.getEmailAddress().setName("Alex");
+                attendee.setType("required");
+                attendees.add(attendee);
+                reservationModel.setAttendees(attendees);
+                //-TODO The model has possible room for attendees as well add if needed
+            }
+        }
 
+        try {
+            String result = Unirest.post("https://graph.microsoft.com/v1.0/users/" + roomEmail +"/events")
+                    .header("accept", "application/json")
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + bearerProvider.getBearer())
+                    .body(gson.toJson(reservationModel))
+                    .asJson().getBody().toString();
+            System.out.println("New reservation added: " + result);
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

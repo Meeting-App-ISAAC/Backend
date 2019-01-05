@@ -3,10 +3,7 @@ package Communication;
 import CalendarResource.Calender;
 import CalendarResource.DummyCalender;
 import CalendarResource.ExchangeCalendar;
-import Reservation.RoomCollection;
-import Reservation.RoomMemory;
-import Reservation.UserCollection;
-import Reservation.UserProfiler;
+import Reservation.*;
 import RoomConfiguration.ReadRoomConfig;
 
 public class ReservationProvider {
@@ -30,6 +27,9 @@ public class ReservationProvider {
 
     public void Reload(){
         calender.Reload();
+    }
+
+    public void addNewEvent(){
     }
     public RoomCollection getCollection(){
         return this.collection;
