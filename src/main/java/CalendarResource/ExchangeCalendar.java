@@ -104,18 +104,9 @@ public class ExchangeCalendar implements Calender {
     @Override
     public void createNewEvent(Reservation reservation){
         ReservationModel reservationModel = new ReservationModel();
-        int roomId = 0;
-        ReservationProvider reservationProvider = ReservationProvider.getInstance();
-        for (Room room : reservationProvider.getCollection().getAllRooms()){
-            for (Reservation reservationTemp : room.getReservations()){
-                if (reservationTemp.getId() == reservation.getId()){
-                    roomId = room.getId();
-                }
-            }
-        }
         String roomEmail = "";
         for (RoomDataModel roomDataModel : config.GetRoomData()) {
-            if (roomDataModel.getId() == roomId) {
+            if (roomDataModel.getId() == getRoomIdByReservation(reservation)) {
                 roomEmail = roomDataModel.getEmail();
                 reservationModel.setSubject(reservation.getTitle());
                 reservationModel.getBody().setContentType("HTML");
@@ -293,6 +284,56 @@ public class ExchangeCalendar implements Calender {
 
     @Override
     public void updateEvent(Reservation reservation) {
+        Reload();
+        ReservationModel reservationModel = new ReservationModel();
+        String roomEmail = "";
 
+
+        for (RoomDataModel roomDataModel : config.GetRoomData()) {
+            if (roomDataModel.getId() == getRoomIdByReservation(reservation)) {
+                roomEmail = roomDataModel.getEmail();
+                reservationModel.setSubject(reservation.getTitle());
+                reservationModel.getBody().setContentType("HTML");
+                reservationModel.getBody().setContent("Automatic room reservation");
+                reservationModel.getStart().setDateTime(reservation.getStart().toString());
+                reservationModel.getStart().setTimeZone("Europe/Amsterdam");
+                reservationModel.getEnd().setDateTime(reservation.getEnd().toString());
+                reservationModel.getEnd().setTimeZone("Europe/Amsterdam");
+                reservationModel.getLocation().setDisplayName(roomDataModel.getLocation());
+                ArrayList<Attendee> attendees = new ArrayList<>();
+                Attendee attendee = new Attendee();
+                attendee.getEmailAddress().setAddress("Fontysgroup2@isaacfontys.onmicrosoft.com");
+                attendee.getEmailAddress().setName("Alex");
+                attendee.setType("required");
+                attendees.add(attendee);
+                reservationModel.setAttendees(attendees);
+                //-TODO The model has possible room for attendees as well add if needed
+            }
+        }
+
+        try {
+            String result = Unirest.patch("https://graph.microsoft.com/v1.0/users/" + roomEmail +"/events/" + reservation.getUuid())
+                    .header("accept", "application/json")
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + bearerProvider.getBearer())
+                    .body(gson.toJson(reservationModel))
+                    .asJson().getBody().toString();
+            System.out.println("Reservation updated: " + result);
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getRoomIdByReservation(Reservation reservation){
+        int roomId = 0;
+        ReservationProvider reservationProvider = ReservationProvider.getInstance();
+        for (Room room : reservationProvider.getCollection().getAllRooms()){
+            for (Reservation reservationTemp : room.getReservations()){
+                if (reservationTemp.getId() == reservation.getId()){
+                    roomId = room.getId();
+                }
+            }
+        }
+        return roomId;
     }
 }
