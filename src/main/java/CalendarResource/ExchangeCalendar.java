@@ -12,6 +12,7 @@ import RoomConfiguration.ReadRoomConfig;
 import RoomConfiguration.RoomConfig;
 import RoomConfiguration.RoomDataModel;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.simple.JSONArray;
@@ -19,7 +20,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.text.DateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import Reservation.Changed;
@@ -34,6 +38,11 @@ public class ExchangeCalendar implements Calender {
     private int userId = 1;
     private int reservationId = 1;
 
+    /**
+     * Constructor, creates an local memory mapping of the rooms configured in "config".
+     * When ExchangeCalendar::Reload is called, this mapping will be synchronized with the exchange server.
+     * @param config
+     */
     public ExchangeCalendar(RoomConfig config) {
         this.config = config;
         for(RoomDataModel roomData : config.GetRoomData()){
@@ -79,7 +88,7 @@ public class ExchangeCalendar implements Calender {
                     changed = true;
                 }
                 if(!old.getEnd().equals(newReservation.getEnd())){
-                    old.setStart(newReservation.getEnd());
+                    old.setEnd(newReservation.getEnd());
                     changed = true;
                 }
                 if(changed){
@@ -92,17 +101,27 @@ public class ExchangeCalendar implements Calender {
             room.addReservation(newReservation);
 
         }
-        for (Reservation reservation : room.getReservations()) {
+        for (int i = room.getReservations().size() - 1; i >= 0; i--) {
+            Reservation reservation = room.getReservations().get(i);
             if(GetReservationByUUID(newReservations, reservation.getUuid()) == null){
                 room.removeReservation(reservation);
                 roomchanged = true;
             }
         }
-        room.roomChanged(Changed.CalendarUpdate);
+        if(roomchanged) {
+            room.roomChanged(Changed.CalendarUpdate);
+        }
     }
 
+    /**
+     * Adds a new reservation to the internal memory.
+     * When ExchangeCalendar::Reload is called, this new reservation will be pushed to the exchange server.
+     * @param reservation reservation object
+     */
     @Override
     public void createNewEvent(Reservation reservation){
+        System.out.println("CREATE");
+
         ReservationModel reservationModel = new ReservationModel();
         String roomEmail = "";
         for (RoomDataModel roomDataModel : config.GetRoomData()) {
@@ -138,21 +157,49 @@ public class ExchangeCalendar implements Calender {
         } catch (UnirestException e) {
             e.printStackTrace();
         }
+
     }
 
+    /**
+     * Synchronise with the exchange server. All newly added, deleted or updated reservation both stored locally or
+     * in the server will be used to update the two servers. A call to this method will make sure the local cache is up to date.
+     * A call to this method on regular bases is recommended.
+     */
     @Override
     public void Reload() {
         getRooms();
     }
 
     public static void main(String[] args){
-        new ExchangeCalendar(new ReadRoomConfig()).getRooms();
+        ExchangeCalendar temp = new ExchangeCalendar(new ReadRoomConfig());
+
+        while(true){
+            temp.Reload();
+        }
+
     }
+
+    /**
+     * Gets a live copy to the local memory mapping of Exchange.
+     * Any changes made outside the ExchangeCalendar class to this copy will make it invalid
+     * @return
+     */
     @Override
     public List<Room> getRooms() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String start = (LocalDateTime.now().format(formatter)) + "T00:00:00";
-        String end = (LocalDateTime.now().plusDays(1).format(formatter)) + "T00:00:00";
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        ZonedDateTime dateNow = ZonedDateTime.ofInstant(cal.toInstant(), ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("Z"));
+
+        cal.add(Calendar.DAY_OF_YEAR,1 );
+        ZonedDateTime dateEnd = ZonedDateTime.ofInstant(cal.toInstant(), ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("Z"));
+        String start = (dateNow.format(formatter));
+        String end = (dateEnd.format(formatter));
         RequestContainer container = new RequestContainer();
 
         for (RoomDataModel roomDataModel : config.GetRoomData()) {
@@ -189,11 +236,16 @@ public class ExchangeCalendar implements Calender {
 
                 while (valueIterator.hasNext()){
                     JSONObject next = valueIterator.next();
-                    JSONObject organizer = (JSONObject) next.get("organizer");
-                    JSONObject emailAddress = (JSONObject) organizer.get("emailAddress");
-                    Reservation reservation = new Reservation(reservationId++,emailAddress.get("name").toString(),false,ParseTime((JSONObject) next.get("start")), ParseTime((JSONObject) next.get("end")));
-                    reservation.setUuid(next.get("iCalUId").toString());
-                    reservations.add(reservation);
+                    if(next.get("isCancelled").toString().equals("true")){
+                        continue;
+                    }
+                    JSONArray attendees = (JSONArray) next.get("attendees");
+                    if(attendees.size() > 0) {
+                        JSONObject emailAddress = (JSONObject) ((JSONObject) attendees.get(0)).get("emailAddress");
+                        Reservation reservation = new Reservation(reservationId++, emailAddress.get("name").toString(), false, ParseTime((JSONObject) next.get("start")), ParseTime((JSONObject) next.get("end")));
+                        reservation.setUuid(next.get("iCalUId").toString());
+                        reservations.add(reservation);
+                    }
                 }
 
                 ModifyRoomReservations(room, reservations);
@@ -206,11 +258,13 @@ public class ExchangeCalendar implements Calender {
     }
 
     private LocalDateTime ParseTime(JSONObject time){
-        System.out.println();
-        System.out.println(time.get("timeZone"));
+        //System.out.println();
+        //System.out.println(time.get("timeZone"));
 
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-        return LocalDateTime.parse(time.get("dateTime").toString(), formatter);
+
+        ZonedDateTime zoned = ZonedDateTime.parse(time.get("dateTime").toString().substring(0, 23)+"Z", formatter);
+        return zoned.withZoneSameInstant(ZoneId.of("Europe/Paris")).toLocalDateTime();
     }
 
 
@@ -232,9 +286,14 @@ public class ExchangeCalendar implements Calender {
     }
 
     private List<User> cachedUsers = new ArrayList<User>();
+
+    /**
+     * Makes a call to the Exchange Server to get all users. Then return those.
+     * @return
+     */
     @Override
     public List<User> getUsers() {
-        ArrayList<User> users = new ArrayList<User>();
+        cachedUsers.clear();
         String result = null;
         try {
             result = Unirest.get("https://graph.microsoft.com/v1.0/users/")

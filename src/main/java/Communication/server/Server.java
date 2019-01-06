@@ -40,7 +40,7 @@ class Server {
         }
         if (timerEnabled) {
             Timer timer = new Timer();
-            timer.schedule(new ReservationTimer(), 0, 60000);
+            timer.schedule(new ReservationTimer(), 0, 6000);
         }
 
         // Resend settings on change of config file
