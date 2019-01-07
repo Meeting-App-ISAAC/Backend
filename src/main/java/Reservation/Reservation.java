@@ -26,6 +26,17 @@ public class Reservation extends Observable {
     }
 
     private String title;
+
+    private String userEmail;
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
     private Boolean hasStarted;
 
     private String uuid;
@@ -45,17 +56,20 @@ public class Reservation extends Observable {
         this.start = start;
         this.end = end;
         this.title = user.getName();
+        this.userEmail = user.getEmail();
     }
 
-    public Reservation(int id, String title, boolean hasStarted, LocalDateTime start, LocalDateTime end){
+    public Reservation(int id, String email, String name, boolean hasStarted, LocalDateTime start, LocalDateTime end){
         this.id = id;
-        this.title = title;
+        this.title = name;
+        this.userEmail = email;
         this.hasStarted = hasStarted;
         this.start = start;
         this.end = end;
     }
     public Reservation(int id, User user, boolean hasStarted, LocalDateTime start, LocalDateTime end){
         this.id = id;
+        this.userEmail = user.getEmail();
         this.title = user.getName();
         this.hasStarted = hasStarted;
         this.start = start;
@@ -89,6 +103,8 @@ public class Reservation extends Observable {
     public Boolean getHasStarted() {
         return hasStarted;
     }
+
+
 
     public void setHasStarted(Boolean hasStarted) {
         this.hasStarted = hasStarted;
