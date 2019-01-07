@@ -221,6 +221,9 @@ public class ExchangeCalendar implements Calender {
 
             JSONObject jo = (JSONObject) (new JSONParser()).parse(result);
             JSONArray responses = (JSONArray) jo.get("responses");
+            if(responses == null){
+                return rooms;
+            }
             Iterator<JSONObject> iterator = responses.iterator();
             while (iterator.hasNext()){
 
