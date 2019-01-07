@@ -7,6 +7,16 @@ public class Reservation extends Observable {
 
     private int id;
 
+    private String calId;
+
+    public String getCalId() {
+        return calId;
+    }
+
+    public void setCalId(String calid) {
+        calId = calid;
+    }
+
     public String getTitle() {
         return title;
     }

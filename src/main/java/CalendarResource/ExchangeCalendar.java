@@ -3,6 +3,7 @@ package CalendarResource;
 import AdminConfiguration.ReadClientConfig;
 import CalendarResource.ExchangeCommunication.BearerProvider;
 import CalendarResource.ExchangeCommunication.ReservationModels.Attendee;
+import CalendarResource.ExchangeCommunication.ReservationModels.Callids;
 import CalendarResource.ExchangeCommunication.ReservationModels.ReservationModel;
 import Communication.ReservationProvider;
 import Reservation.Reservation;
@@ -12,7 +13,6 @@ import RoomConfiguration.ReadRoomConfig;
 import RoomConfiguration.RoomConfig;
 import RoomConfiguration.RoomDataModel;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.simple.JSONArray;
@@ -20,7 +20,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -122,6 +121,8 @@ public class ExchangeCalendar implements Calender {
     public void createNewEvent(Reservation reservation){
         System.out.println("CREATE");
 
+        reservation.setId(reservationId++);
+
         ReservationModel reservationModel = new ReservationModel();
         String roomEmail = "";
         for (RoomDataModel roomDataModel : config.GetRoomData()) {
@@ -153,7 +154,12 @@ public class ExchangeCalendar implements Calender {
                     .header("Authorization", "Bearer " + bearerProvider.getBearer())
                     .body(gson.toJson(reservationModel))
                     .asJson().getBody().toString();
-            System.out.println("New reservation added: " + result);
+            Callids callids = gson.fromJson(result, Callids.class);
+            reservation.setUuid(callids.getiCalUId());
+            reservation.setCalId(callids.getId());
+            System.out.println("UUID: " + reservation.getUuid());
+            System.out.println("ID: " + reservation.getCalId());
+            //get uuid here and add it to reservation
         } catch (UnirestException e) {
             e.printStackTrace();
         }
@@ -187,6 +193,7 @@ public class ExchangeCalendar implements Calender {
     @Override
     public List<Room> getRooms() {
 
+        String calID = "";
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -227,7 +234,6 @@ public class ExchangeCalendar implements Calender {
                 JSONObject roomIterator = iterator.next();
                 Room room = GetRoomById(Integer.parseInt(roomIterator.get("id").toString()));
 
-
                 JSONObject body = (JSONObject) roomIterator.get("body");
                 JSONArray value = (JSONArray) body.get("value");
                 Iterator<JSONObject> valueIterator = value.iterator();
@@ -239,11 +245,13 @@ public class ExchangeCalendar implements Calender {
                     if(next.get("isCancelled").toString().equals("true")){
                         continue;
                     }
+                    calID = (String) next.get("id");
                     JSONArray attendees = (JSONArray) next.get("attendees");
                     if(attendees.size() > 0) {
                         JSONObject emailAddress = (JSONObject) ((JSONObject) attendees.get(0)).get("emailAddress");
                         Reservation reservation = new Reservation(reservationId++, emailAddress.get("name").toString(), false, ParseTime((JSONObject) next.get("start")), ParseTime((JSONObject) next.get("end")));
                         reservation.setUuid(next.get("iCalUId").toString());
+                        reservation.setCalId(calID);
                         reservations.add(reservation);
                     }
                 }
@@ -343,7 +351,6 @@ public class ExchangeCalendar implements Calender {
 
     @Override
     public void updateEvent(Reservation reservation) {
-        Reload();
         ReservationModel reservationModel = new ReservationModel();
         String roomEmail = "";
 
@@ -370,8 +377,10 @@ public class ExchangeCalendar implements Calender {
             }
         }
 
+        System.out.println("https://graph.microsoft.com/v1.0/users/" + roomEmail +"/events/" + reservation.getCalId());
+
         try {
-            String result = Unirest.patch("https://graph.microsoft.com/v1.0/users/" + roomEmail +"/events/" + reservation.getUuid())
+            String result = Unirest.patch("https://graph.microsoft.com/v1.0/users/" + roomEmail +"/events/" + reservation.getCalId())
                     .header("accept", "application/json")
                     .header("Content-Type", "application/json")
                     .header("Authorization", "Bearer " + bearerProvider.getBearer())

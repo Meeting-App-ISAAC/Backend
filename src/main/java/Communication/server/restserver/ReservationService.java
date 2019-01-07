@@ -120,9 +120,9 @@ public class ReservationService {
 
         User user = userCollection.getUserById(reservationCreateResponse.getUserId());
         //
-        Reservation reservation = new Reservation(reservationsSize + 1, user, true, LocalDateTime.now(), LocalDateTime.now().plusMinutes((long) reservationCreateResponse.getDuration()));
+        Reservation reservation = new Reservation(0, user, true, LocalDateTime.now(), LocalDateTime.now().plusMinutes((long) reservationCreateResponse.getDuration()));
         collection.getRoom(reservationCreateResponse.getRoomId()).addReservation(reservation);
-            if (!overlap.CheckOverlap(reservationsSize + 1, collection.getRoom(reservationCreateResponse.getRoomId()).getId())) {
+            if (!overlap.CheckOverlap(0, collection.getRoom(reservationCreateResponse.getRoomId()).getId())) {
                 reservation.Changed(Changed.AddedReservation);
 
                 reply = new Reply(Status.OK, true);
