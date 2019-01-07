@@ -130,7 +130,7 @@ public class ExchangeCalendar implements Calender {
                 roomEmail = roomDataModel.getEmail();
                 reservationModel.setSubject(reservation.getTitle());
                 reservationModel.getBody().setContentType("HTML");
-                reservationModel.getBody().setContent("Automatic room reservation");
+                reservationModel.getBody().setContent("Meeting has started");
                 reservationModel.getStart().setDateTime(reservation.getStart().toString());
                 reservationModel.getStart().setTimeZone("Europe/Amsterdam");
                 reservationModel.getEnd().setDateTime(reservation.getEnd().toString());
@@ -138,12 +138,11 @@ public class ExchangeCalendar implements Calender {
                 reservationModel.getLocation().setDisplayName(roomDataModel.getLocation());
                 ArrayList<Attendee> attendees = new ArrayList<>();
                 Attendee attendee = new Attendee();
-                attendee.getEmailAddress().setAddress("Fontysgroup2@isaacfontys.onmicrosoft.com");
-                attendee.getEmailAddress().setName("Alex");
+                attendee.getEmailAddress().setAddress(reservation.getUserEmail());
+                attendee.getEmailAddress().setName(reservation.getTitle());
                 attendee.setType("required");
                 attendees.add(attendee);
                 reservationModel.setAttendees(attendees);
-                //-TODO The model has possible room for attendees as well add if needed
             }
         }
 
@@ -249,7 +248,11 @@ public class ExchangeCalendar implements Calender {
                     JSONArray attendees = (JSONArray) next.get("attendees");
                     if(attendees.size() > 0) {
                         JSONObject emailAddress = (JSONObject) ((JSONObject) attendees.get(0)).get("emailAddress");
-                        Reservation reservation = new Reservation(reservationId++, emailAddress.get("name").toString(), false, ParseTime((JSONObject) next.get("start")), ParseTime((JSONObject) next.get("end")));
+                        Reservation reservation = new Reservation(reservationId++, emailAddress.get("address").toString(), emailAddress.get("name").toString(), false, ParseTime((JSONObject) next.get("start")), ParseTime((JSONObject) next.get("end")));
+                        String bodyPreview = (String) next.get("bodyPreview");
+                        if (bodyPreview.contains("Meeting has started")){
+                            reservation.setHasStarted(true);
+                        }
                         reservation.setUuid(next.get("iCalUId").toString());
                         reservation.setCalId(calID);
                         reservations.add(reservation);
@@ -360,7 +363,11 @@ public class ExchangeCalendar implements Calender {
                 roomEmail = roomDataModel.getEmail();
                 reservationModel.setSubject(reservation.getTitle());
                 reservationModel.getBody().setContentType("HTML");
-                reservationModel.getBody().setContent("Automatic room reservation");
+                if (reservation.getHasStarted()){
+                    reservationModel.getBody().setContent("Meeting has started");
+                } else{
+                    reservationModel.getBody().setContent("Automatic room reservation");
+                }
                 reservationModel.getStart().setDateTime(reservation.getStart().toString());
                 reservationModel.getStart().setTimeZone("Europe/Amsterdam");
                 reservationModel.getEnd().setDateTime(reservation.getEnd().toString());
@@ -368,8 +375,8 @@ public class ExchangeCalendar implements Calender {
                 reservationModel.getLocation().setDisplayName(roomDataModel.getLocation());
                 ArrayList<Attendee> attendees = new ArrayList<>();
                 Attendee attendee = new Attendee();
-                attendee.getEmailAddress().setAddress("Fontysgroup2@isaacfontys.onmicrosoft.com");
-                attendee.getEmailAddress().setName("Alex");
+                attendee.getEmailAddress().setAddress(reservation.getUserEmail());
+                attendee.getEmailAddress().setName(reservation.getTitle());
                 attendee.setType("required");
                 attendees.add(attendee);
                 reservationModel.setAttendees(attendees);
