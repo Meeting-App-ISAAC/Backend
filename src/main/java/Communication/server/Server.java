@@ -35,8 +35,8 @@ class Server {
         try {
             timerEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_TIMEOUT_ENABLED"));
         }
-        catch (IOException e) {
-            System.out.println("[error] Could not get properties file");
+        catch (Exception e) {
+            noPropertiesError();
         }
         if (timerEnabled) {
             Timer timer = new Timer();
@@ -48,8 +48,8 @@ class Server {
         try {
             resendOnChange = Boolean.parseBoolean(SettingsHandler.getProperty("RESEND_ON_CONFIG_CHANGE"));
         }
-        catch (IOException e) {
-            System.out.println("[error] Could not get properties file");
+        catch (Exception e) {
+            noPropertiesError();
         }
         if (resendOnChange) {
             Timer timer = new Timer();
@@ -61,9 +61,8 @@ class Server {
         try {
             connector.setPort(Integer.parseInt(SettingsHandler.getProperty("SERVER_PORT")));
         }
-        catch (IOException e) {
-            System.out.println("[error] Could not get properties file");
-            connector.setPort(8090);
+        catch (Exception e) {
+            noPropertiesError();
         }
         server.addConnector(connector);
 
@@ -114,5 +113,10 @@ class Server {
         {
             t.printStackTrace(System.err);
         }
+    }
+    private static void noPropertiesError() {
+        // Properties file could not be found, return error and exit application with code 1
+        System.out.println("[error] Could not get properties file");
+        System.exit(1);
     }
 }
