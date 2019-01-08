@@ -34,6 +34,7 @@ public class ExchangeCalendar implements Calender {
     private Gson gson = new Gson();
     private ArrayList<Room> rooms = new ArrayList<Room>();
 
+    private ArrayList<Reservation> activeReservations = new ArrayList<Reservation>();
     private int userId = 1;
     private int reservationId = 1;
 
@@ -59,6 +60,18 @@ public class ExchangeCalendar implements Calender {
             }
         }
         return null;
+    }
+
+    private void CheckActivateReservation(Reservation newReservation, Room room){
+        for (Reservation activeReservation : activeReservations) {
+            if(activeReservation.getUuid().equals(newReservation.getUuid())){
+                newReservation.setHasStarted(true);
+                newReservation.setRoom(room);
+                updateEvent(newReservation);
+                activeReservations.remove(activeReservation);
+                break;
+            }
+        }
     }
 
     private Reservation GetReservationByUUID(ArrayList<Reservation> reservations, String UUID){
@@ -90,10 +103,15 @@ public class ExchangeCalendar implements Calender {
                     old.setEnd(newReservation.getEnd());
                     changed = true;
                 }
+                if(old.getHasStarted() != newReservation.getHasStarted()){
+                    old.setHasStarted(newReservation.getHasStarted());
+                    changed = true;
+                }
                 if(changed){
                     roomchanged = true;
                     old.Changed(Changed.CalendarUpdate);
                 }
+                old.setCalId(newReservation.getCalId());
                 continue;
             }
             roomchanged = true;
@@ -118,36 +136,14 @@ public class ExchangeCalendar implements Calender {
      * @param reservation reservation object
      */
     @Override
-    public void createNewEvent(Reservation reservation){
-        System.out.println("CREATE");
-
+    public synchronized void createNewEvent(Reservation reservation){
+        System.out.println("CREATE A NEW RESERVATION!!!");
         reservation.setId(reservationId++);
-
         ReservationModel reservationModel = new ReservationModel();
-        String roomEmail = "";
-        for (RoomDataModel roomDataModel : config.GetRoomData()) {
-            if (roomDataModel.getId() == getRoomIdByReservation(reservation)) {
-                roomEmail = roomDataModel.getEmail();
-                reservationModel.setSubject(reservation.getTitle());
-                reservationModel.getBody().setContentType("HTML");
-                reservationModel.getBody().setContent("Meeting has started");
-                reservationModel.getStart().setDateTime(reservation.getStart().toString());
-                reservationModel.getStart().setTimeZone("Europe/Amsterdam");
-                reservationModel.getEnd().setDateTime(reservation.getEnd().toString());
-                reservationModel.getEnd().setTimeZone("Europe/Amsterdam");
-                reservationModel.getLocation().setDisplayName(roomDataModel.getLocation());
-                ArrayList<Attendee> attendees = new ArrayList<>();
-                Attendee attendee = new Attendee();
-                attendee.getEmailAddress().setAddress(reservation.getUserEmail());
-                attendee.getEmailAddress().setName(reservation.getTitle());
-                attendee.setType("required");
-                attendees.add(attendee);
-                reservationModel.setAttendees(attendees);
-            }
-        }
+        UpdateReservationModel(reservation, reservationModel);
 
         try {
-            String result = Unirest.post("https://graph.microsoft.com/v1.0/users/" + roomEmail +"/events")
+            String result = Unirest.post("https://graph.microsoft.com/v1.0/users/" + reservation.getUserEmail() +"/events")
                     .header("accept", "application/json")
                     .header("Content-Type", "application/json")
                     .header("Authorization", "Bearer " + bearerProvider.getBearer())
@@ -156,13 +152,58 @@ public class ExchangeCalendar implements Calender {
             Callids callids = gson.fromJson(result, Callids.class);
             reservation.setUuid(callids.getiCalUId());
             reservation.setCalId(callids.getId());
+
+            reservation.getRoom().addReservation(reservation); //this look weird
+            reservation.getRoom().roomChanged(Changed.AddedReservation);
+
             System.out.println("UUID: " + reservation.getUuid());
             System.out.println("ID: " + reservation.getCalId());
+
+            activeReservations.add(reservation);
             //get uuid here and add it to reservation
         } catch (UnirestException e) {
             e.printStackTrace();
         }
 
+    }
+
+    private String UpdateReservationModel(Reservation reservation, ReservationModel reservationModel) {
+        String roomEmail;
+        for (RoomDataModel roomDataModel : config.GetRoomData()) {
+            if (roomDataModel.getId() == getRoomIdByReservation(reservation)) {
+                roomEmail = roomDataModel.getEmail();
+                reservationModel.setSubject(reservation.getTitle() );
+                if(reservation.getHasStarted()) {
+                    reservationModel.setSubject("started - " +reservation.getTitle() );
+                }
+                reservationModel.getBody().setContentType("Text");
+                if(reservation.getHasStarted()) {
+                    reservationModel.getBody().setContent("Meeting has started");
+                }
+                reservationModel.getStart().setDateTime(GetTimeForRequest(reservation.getStart()));
+                reservationModel.getStart().setTimeZone("UTC");
+                reservationModel.getEnd().setDateTime(GetTimeForRequest(reservation.getEnd()));
+                reservationModel.getEnd().setTimeZone("UTC");
+                reservationModel.getLocation().setDisplayName(roomDataModel.getLocation());
+                ArrayList<Attendee> attendees = new ArrayList<>();
+                Attendee attendee = new Attendee();
+                attendee.getEmailAddress().setAddress(roomEmail);
+                attendee.getEmailAddress().setName(roomDataModel.getName());
+                attendee.setType("resource");
+                attendees.add(attendee);
+                reservationModel.setAttendees(attendees);
+                return roomEmail;
+            }
+        }
+        return "";
+    }
+
+    public String GetTimeForRequest(LocalDateTime time){
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        ZonedDateTime date = ZonedDateTime.of(time, ZoneId.systemDefault());
+
+        ZonedDateTime dateEnd = date.withZoneSameInstant(ZoneId.of("Z"));
+        return dateEnd.format(formatter);
     }
 
     /**
@@ -171,7 +212,7 @@ public class ExchangeCalendar implements Calender {
      * A call to this method on regular bases is recommended.
      */
     @Override
-    public void Reload() {
+    public synchronized void Reload() {
         getRooms();
     }
 
@@ -190,15 +231,18 @@ public class ExchangeCalendar implements Calender {
      * @return
      */
     @Override
-    public List<Room> getRooms() {
+    public synchronized List<Room> getRooms() {
 
         String calID = "";
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.set(Calendar.HOUR_OF_DAY, 0);
+
+
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
+
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         ZonedDateTime dateNow = ZonedDateTime.ofInstant(cal.toInstant(), ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("Z"));
 
@@ -212,7 +256,9 @@ public class ExchangeCalendar implements Calender {
             if (roomDataModel.getEmail() != null && !roomDataModel.getEmail().isEmpty()) {
                 RequestModel model = new RequestModel();
                 model.id = roomDataModel.getId();
-                model.url = "/users/" + roomDataModel.getEmail() + "/calendarview?startDatetime=" + start + "&endDatetime=" + end;
+                //$filter=start/dateTime ge '2017-07-01T08:00'
+                model.url = "/users/" + roomDataModel.getEmail() + "/events?$filter=end/dateTime ge '"+start+"' and start/dateTime le '"+end+"'";
+                System.out.println(model.url);
                 container.requests.add(model);
             }
         }
@@ -258,12 +304,13 @@ public class ExchangeCalendar implements Calender {
                         }
                         reservation.setUuid(next.get("iCalUId").toString());
                         reservation.setCalId(calID);
+                        CheckActivateReservation(reservation, room);
                         reservations.add(reservation);
                     }
                 }
-
                 ModifyRoomReservations(room, reservations);
             }
+
         } catch (UnirestException | ParseException e) {
             e.printStackTrace();
         }
@@ -356,41 +403,14 @@ public class ExchangeCalendar implements Calender {
     }
 
     @Override
-    public void updateEvent(Reservation reservation) {
+    public synchronized void updateEvent(Reservation reservation) {
         ReservationModel reservationModel = new ReservationModel();
-        String roomEmail = "";
+        String email = UpdateReservationModel(reservation, reservationModel);
 
-
-        for (RoomDataModel roomDataModel : config.GetRoomData()) {
-            if (roomDataModel.getId() == getRoomIdByReservation(reservation)) {
-                roomEmail = roomDataModel.getEmail();
-                reservationModel.setSubject(reservation.getTitle());
-                reservationModel.getBody().setContentType("HTML");
-                if (reservation.getHasStarted()){
-                    reservationModel.getBody().setContent("Meeting has started");
-                } else{
-                    reservationModel.getBody().setContent("Automatic room reservation");
-                }
-                reservationModel.getStart().setDateTime(reservation.getStart().toString());
-                reservationModel.getStart().setTimeZone("Europe/Amsterdam");
-                reservationModel.getEnd().setDateTime(reservation.getEnd().toString());
-                reservationModel.getEnd().setTimeZone("Europe/Amsterdam");
-                reservationModel.getLocation().setDisplayName(roomDataModel.getLocation());
-                ArrayList<Attendee> attendees = new ArrayList<>();
-                Attendee attendee = new Attendee();
-                attendee.getEmailAddress().setAddress(reservation.getUserEmail());
-                attendee.getEmailAddress().setName(reservation.getTitle());
-                attendee.setType("required");
-                attendees.add(attendee);
-                reservationModel.setAttendees(attendees);
-                //-TODO The model has possible room for attendees as well add if needed
-            }
-        }
-
-        System.out.println("https://graph.microsoft.com/v1.0/users/" + roomEmail +"/events/" + reservation.getCalId());
+        System.out.println("https://graph.microsoft.com/v1.0/users/" + email +"/events/" + reservation.getCalId());
 
         try {
-            String result = Unirest.patch("https://graph.microsoft.com/v1.0/users/" + roomEmail +"/events/" + reservation.getCalId())
+            String result = Unirest.patch("https://graph.microsoft.com/v1.0/users/" + email +"/events/" + reservation.getCalId())
                     .header("accept", "application/json")
                     .header("Content-Type", "application/json")
                     .header("Authorization", "Bearer " + bearerProvider.getBearer())
@@ -403,15 +423,6 @@ public class ExchangeCalendar implements Calender {
     }
 
     public int getRoomIdByReservation(Reservation reservation){
-        int roomId = 0;
-        ReservationProvider reservationProvider = ReservationProvider.getInstance();
-        for (Room room : reservationProvider.getCollection().getAllRooms()){
-            for (Reservation reservationTemp : room.getReservations()){
-                if (reservationTemp.getId() == reservation.getId()){
-                    roomId = room.getId();
-                }
-            }
-        }
-        return roomId;
+        return reservation.getRoom() == null ? -1 : reservation.getRoom().getId();
     }
 }

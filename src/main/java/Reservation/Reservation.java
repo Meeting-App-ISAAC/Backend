@@ -5,6 +5,7 @@ import java.util.Observable;
 
 public class Reservation extends Observable {
 
+    private Room room;
     private int id;
 
     private String calId;
@@ -118,5 +119,14 @@ public class Reservation extends Observable {
 
         setChanged();
         notifyObservers(obj);
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+
+        this.room = room;
     }
 }

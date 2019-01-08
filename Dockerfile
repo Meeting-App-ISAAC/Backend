@@ -7,4 +7,5 @@ FROM java:8
 # Copy target jar file into the image
 COPY --from=builder ./backend/target/MeetingAppBackend-1.0-SNAPSHOT-jar-with-dependencies.jar  ./app.jar
 # Run jar
+COPY src/resources .
 CMD java -jar app.jar

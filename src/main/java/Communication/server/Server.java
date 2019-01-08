@@ -116,10 +116,6 @@ class Server {
         catch (Exception e) {
             noPropertiesError();
         }
-        if (resendOnChange) {
-            Timer timer = new Timer();
-            timer.schedule(new SettingsWatcher(new File("target/classes/config.properties")),0,1000);
-        }
         System.out.println("[info] Done!");
     }
     private static ServerConnector setServerPort(ServerConnector connector) {

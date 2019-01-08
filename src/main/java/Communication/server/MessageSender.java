@@ -71,10 +71,7 @@ public class MessageSender implements  IMessageSender{
     private ArrayList<FrontendRoom> ReservationDumpToday() {
         // Get rooms from ReservationProvider
         List<Room> rooms = ReservationProvider.getInstance().getCollection().getAllRooms();
-        // Set reservations for each room to those relevant for today
-        for (Room r : rooms) {
-            r.overwriteReservations(r.getReservationsForDay(LocalDateTime.now()));
-        }
+
         ArrayList<FrontendRoom> frontendRooms = new ArrayList<>();
         // Convert rooms to frontendRooms
         for(Room r : rooms) {

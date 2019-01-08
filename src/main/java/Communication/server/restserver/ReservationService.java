@@ -121,16 +121,12 @@ public class ReservationService {
         User user = userCollection.getUserById(reservationCreateResponse.getUserId());
         //
         Reservation reservation = new Reservation(0, user, true, LocalDateTime.now(), LocalDateTime.now().plusMinutes((long) reservationCreateResponse.getDuration()));
-        collection.getRoom(reservationCreateResponse.getRoomId()).addReservation(reservation);
-            if (!overlap.CheckOverlap(0, collection.getRoom(reservationCreateResponse.getRoomId()).getId())) {
-                reservation.Changed(Changed.AddedReservation);
 
-                reply = new Reply(Status.OK, true);
-                return Response.status(reply.getStatus().getCode())
-                        .entity(reply.getMessage()).build();
-            }
-        collection.getRoom(reservationCreateResponse.getRoomId()).removeReservation(reservation);
-
+        if (collection.addNewReservation( collection.getRoom(reservationCreateResponse.getRoomId()), reservation)) {
+            reply = new Reply(Status.OK, true);
+            return Response.status(reply.getStatus().getCode())
+                    .entity(reply.getMessage()).build();
+        }
         reply = new Reply(Status.OK, false);
         return Response.status(reply.getStatus().getCode())
                 .entity(reply.getMessage()).build();

@@ -28,10 +28,22 @@ public class ReadAdminConfig {
         if(cached != null){
             return cached;
         }
-        InputStream in = getClass().getResourceAsStream("/admin.txt");
+        InputStream in = getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         cached = reader.lines().collect(Collectors.joining());
         return cached;
+    }
+
+    InputStream getInputStream(){
+        String path = "./admin.txt";
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(path);
+            return fis;
+        } catch (FileNotFoundException e) {
+            return ReadAdminConfig.class.getClassLoader().getResourceAsStream("/admin.txt");
+        }
+
     }
 
 }
