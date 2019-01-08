@@ -65,9 +65,11 @@ public class ExchangeCalendar implements Calender {
     private void CheckActivateReservation(Reservation newReservation, Room room){
         for (Reservation activeReservation : activeReservations) {
             if(activeReservation.getUuid().equals(newReservation.getUuid())){
+                activeReservation.setHasStarted(true);
+                activeReservation.setRoom(room);
                 newReservation.setHasStarted(true);
                 newReservation.setRoom(room);
-                updateEvent(newReservation);
+                updateEvent(activeReservation);
                 activeReservations.remove(activeReservation);
                 break;
             }

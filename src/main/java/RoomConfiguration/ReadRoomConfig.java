@@ -58,7 +58,7 @@ public class ReadRoomConfig implements RoomConfig {
             fis = new FileInputStream(path);
             return fis;
         } catch (FileNotFoundException e) {
-            return ReadRoomConfig.class.getClassLoader().getResourceAsStream("/roomdata.txt");
+            return ReadRoomConfig.class.getClassLoader().getResourceAsStream("roomdata.txt");
         }
 
     }
