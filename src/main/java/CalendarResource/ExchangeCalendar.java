@@ -5,7 +5,6 @@ import CalendarResource.ExchangeCommunication.BearerProvider;
 import CalendarResource.ExchangeCommunication.ReservationModels.Attendee;
 import CalendarResource.ExchangeCommunication.ReservationModels.Callids;
 import CalendarResource.ExchangeCommunication.ReservationModels.ReservationModel;
-import Communication.ReservationProvider;
 import Reservation.Reservation;
 import Reservation.Room;
 import Reservation.User;
@@ -62,15 +61,19 @@ public class ExchangeCalendar implements Calender {
         return null;
     }
 
-    private void CheckActivateReservation(Reservation newReservation, Room room){
-        for (Reservation activeReservation : activeReservations) {
+    private void CheckActivateReservation(Reservation newReservation, Room room, boolean start){
+        for (int i = activeReservations.size() - 1; i >= 0; i--) {
+            Reservation activeReservation = activeReservations.get(i);
             if(activeReservation.getUuid().equals(newReservation.getUuid())){
+                if(start){
+                    break;
+                }
                 activeReservation.setHasStarted(true);
                 activeReservation.setRoom(room);
+                activeReservation.setCalId(newReservation.getCalId());
                 newReservation.setHasStarted(true);
                 newReservation.setRoom(room);
-                updateEvent(activeReservation);
-                activeReservations.remove(activeReservation);
+                updateEvent(newReservation);
                 break;
             }
         }
@@ -153,7 +156,6 @@ public class ExchangeCalendar implements Calender {
                     .asJson().getBody().toString();
             Callids callids = gson.fromJson(result, Callids.class);
             reservation.setUuid(callids.getiCalUId());
-            reservation.setCalId(callids.getId());
 
             reservation.getRoom().addReservation(reservation); //this look weird
             reservation.getRoom().roomChanged(Changed.AddedReservation);
@@ -162,7 +164,7 @@ public class ExchangeCalendar implements Calender {
             System.out.println("ID: " + reservation.getCalId());
 
             activeReservations.add(reservation);
-            //get uuid here and add it to reservation
+            waitAndReload();
         } catch (UnirestException e) {
             e.printStackTrace();
         }
@@ -214,18 +216,10 @@ public class ExchangeCalendar implements Calender {
      * A call to this method on regular bases is recommended.
      */
     @Override
-    public synchronized void Reload() {
+    public void Reload() {
         getRooms();
     }
 
-    public static void main(String[] args){
-        ExchangeCalendar temp = new ExchangeCalendar(new ReadRoomConfig());
-
-        while(true){
-            temp.Reload();
-        }
-
-    }
 
     /**
      * Gets a live copy to the local memory mapping of Exchange.
@@ -233,9 +227,9 @@ public class ExchangeCalendar implements Calender {
      * @return
      */
     @Override
-    public synchronized List<Room> getRooms() {
+    public  List<Room> getRooms() {
 
-        String calID = "";
+
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -278,39 +272,42 @@ public class ExchangeCalendar implements Calender {
             if(responses == null){
                 return rooms;
             }
-            Iterator<JSONObject> iterator = responses.iterator();
-            while (iterator.hasNext()){
+            synchronized (this) {
+                Iterator<JSONObject> iterator = responses.iterator();
+                while (iterator.hasNext()) {
 
-                JSONObject roomIterator = iterator.next();
-                Room room = GetRoomById(Integer.parseInt(roomIterator.get("id").toString()));
+                    JSONObject roomIterator = iterator.next();
+                    Room room = GetRoomById(Integer.parseInt(roomIterator.get("id").toString()));
 
-                JSONObject body = (JSONObject) roomIterator.get("body");
-                JSONArray value = (JSONArray) body.get("value");
-                Iterator<JSONObject> valueIterator = value.iterator();
+                    JSONObject body = (JSONObject) roomIterator.get("body");
+                    JSONArray value = (JSONArray) body.get("value");
+                    Iterator<JSONObject> valueIterator = value.iterator();
 
-                ArrayList<Reservation> reservations = new ArrayList<Reservation>();
+                    ArrayList<Reservation> reservations = new ArrayList<Reservation>();
 
-                while (valueIterator.hasNext()){
-                    JSONObject next = valueIterator.next();
-                    if(next.get("isCancelled").toString().equals("true")){
-                        continue;
-                    }
-                    calID = (String) next.get("id");
-                    JSONArray attendees = (JSONArray) next.get("attendees");
-                    if(attendees.size() > 0) {
-                        JSONObject emailAddress = (JSONObject) ((JSONObject) attendees.get(0)).get("emailAddress");
-                        Reservation reservation = new Reservation(reservationId++, emailAddress.get("address").toString(), emailAddress.get("name").toString(), false, ParseTime((JSONObject) next.get("start")), ParseTime((JSONObject) next.get("end")));
-                        String bodyPreview = (String) next.get("bodyPreview");
-                        if (bodyPreview.contains("Meeting has started")){
-                            reservation.setHasStarted(true);
+                    while (valueIterator.hasNext()) {
+                        JSONObject next = valueIterator.next();
+                        if (next.get("isCancelled").toString().equals("true")) {
+                            continue;
                         }
-                        reservation.setUuid(next.get("iCalUId").toString());
-                        reservation.setCalId(calID);
-                        CheckActivateReservation(reservation, room);
-                        reservations.add(reservation);
+                        String calID = (String) next.get("id");
+                        JSONArray attendees = (JSONArray) next.get("attendees");
+                        if (attendees.size() > 0) {
+                            JSONObject emailAddress = (JSONObject) ((JSONObject) attendees.get(0)).get("emailAddress");
+                            Reservation reservation = new Reservation(reservationId++, emailAddress.get("address").toString(), emailAddress.get("name").toString(), false, ParseTime((JSONObject) next.get("start")), ParseTime((JSONObject) next.get("end")));
+                            String bodyPreview = (String) next.get("bodyPreview");
+                            if (bodyPreview.contains("Meeting has started")) {
+                                reservation.setHasStarted(true);
+                            }
+                            reservation.setUuid(next.get("iCalUId").toString());
+                            reservation.setCalId(calID);
+                            CheckActivateReservation(reservation, room, bodyPreview.contains("Meeting has started"));
+                            reservations.add(reservation);
+                        }
                     }
+
+                    ModifyRoomReservations(room, reservations);
                 }
-                ModifyRoomReservations(room, reservations);
             }
 
         } catch (UnirestException | ParseException e) {
@@ -405,7 +402,7 @@ public class ExchangeCalendar implements Calender {
     }
 
     @Override
-    public synchronized void updateEvent(Reservation reservation) {
+    public void updateEvent(Reservation reservation) {
         ReservationModel reservationModel = new ReservationModel();
         String email = UpdateReservationModel(reservation, reservationModel);
 
@@ -419,7 +416,18 @@ public class ExchangeCalendar implements Calender {
                     .body(gson.toJson(reservationModel))
                     .asJson().getBody().toString();
             System.out.println("Reservation updated: " + result);
+            waitAndReload();
         } catch (UnirestException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private  void waitAndReload(){
+        try {
+            Thread.sleep(3000);
+            Reload();
+
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

@@ -41,9 +41,8 @@ public class ReadAdminConfig {
             fis = new FileInputStream(path);
             return fis;
         } catch (FileNotFoundException e) {
-            return ReadAdminConfig.class.getClassLoader().getResourceAsStream("/admin.txt");
+            return ReadAdminConfig.class.getClassLoader().getResourceAsStream("admin.txt");
         }
-
     }
 
 }
