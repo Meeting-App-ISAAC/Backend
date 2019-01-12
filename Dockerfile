@@ -1,8 +1,11 @@
-# Get tomcat image with java 10
-FROM tomcat:9.0.13-jre10
-# Set WORKDIR to root
-WORKDIR .
+FROM maven:3.3-jdk-8 as builder
+COPY . backend
+RUN cd backend && mvn package
+
+# Get tomcat image with java 8
+FROM java:8
 # Copy target jar file into the image
-COPY ./target/MeetingAppBackend-1.0-SNAPSHOT-jar-with-dependencies.jar ./app.jar
+COPY --from=builder ./backend/target/MeetingAppBackend-1.0-SNAPSHOT-jar-with-dependencies.jar  ./app.jar
 # Run jar
+COPY src/resources .
 CMD java -jar app.jar

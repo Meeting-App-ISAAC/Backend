@@ -23,7 +23,6 @@ public class WebSocket implements IWebSocket{
     private Gson gson = new Gson();
     private MessageToObjectServer messageToObjectServer;
     private IEncapsulatingMessageGenerator messageGenerator;
-    private Session websocketSession;
     private IMessageSender message = new MessageSender();
 
     private Calender calender;
@@ -55,13 +54,19 @@ public class WebSocket implements IWebSocket{
             // If so, proceed with sending the client reservations
             System.out.println("[info] Socket connected & authenticated: " + session);
             sessionProvider.addSession(session);
-            websocketSession = session;
             message.sendReservationDump(session);
             FrontendSettings frontendSettings = new FrontendSettings();
             sendTo(session.getId(), frontendSettings);
         }
         else {
             System.out.println("[info] Connection " + session + " refused, invalid key");
+            sendToClient(session,"Error: invalid key");
+            try {
+                session.close();
+            }
+            catch (IOException e) {
+                System.out.println("[error] Could not close session nr. " + session.getId());
+            }
         }
     }
 
@@ -105,7 +110,6 @@ public class WebSocket implements IWebSocket{
     @OnClose
     public void onWebSocketClose(CloseReason reason)
     {
-        sessionProvider.removeSession(websocketSession);
         System.out.println("[info] Socket Closed: " + reason);
     }
 

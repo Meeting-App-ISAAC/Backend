@@ -1,5 +1,7 @@
 package Settings;
 
+import AdminConfiguration.ReadClientConfig;
+
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.Observable;
@@ -21,10 +23,22 @@ public class SettingsHandler extends Observable {
     private static Properties properties() throws IOException {
         Properties properties = new Properties();
 
-        InputStream in = SettingsHandler.class.getResourceAsStream("/config.properties");
+        InputStream in = getInputStream();
 
         properties.load(in);
         return properties;
+    }
+
+    static InputStream getInputStream(){
+        String path = "./config.properties";
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(path);
+            return fis;
+        } catch (FileNotFoundException e) {
+            return SettingsHandler.class.getClassLoader().getResourceAsStream("config.properties");
+        }
+
     }
 
     public static String getProperty(String key) throws IOException {

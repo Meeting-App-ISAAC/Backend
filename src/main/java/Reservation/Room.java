@@ -12,6 +12,8 @@ public class Room extends java.util.Observable implements Observer {
     private String name;
     private ArrayList<Reservation> reservations = new ArrayList<Reservation>();
 
+
+   
     public Room(){
 
     }
@@ -20,6 +22,7 @@ public class Room extends java.util.Observable implements Observer {
         this.id = id;
         this.name = name;
         for (Reservation reservation : reservations){
+
             addReservation(reservation);
         }
     }
@@ -46,23 +49,7 @@ public class Room extends java.util.Observable implements Observer {
 
     // Returns reservations for the day specified in the parameters
     public ArrayList<Reservation> getReservationsForDay(LocalDateTime time) {
-        ArrayList<Reservation> reservationsToday = new ArrayList<Reservation>();
-        for (Reservation r : reservations) {
-            // Check if there are any reservations for the same year as the given time
-            if (r.getEnd().getYear() == time.getYear() || r.getStart().getYear() == time.getYear()) {
-                // Check if there are any reservations that start or end on the same day as the given time
-                // If so, add to list
-                if (r.getEnd().getDayOfYear() == time.getDayOfYear() || r.getStart().getDayOfYear() == time.getDayOfYear()) {
-                    reservationsToday.add(r);
-                }
-                // Check if there are any reservations that start before the given time and end after
-                // If so, add to list
-                else if (time.isBefore(r.getEnd()) && time.isAfter(r.getStart())) {
-                    reservationsToday.add(r);
-                }
-            }
-        }
-        return reservationsToday;
+        return reservations;
     }
 
     public void setReservations(ArrayList<Reservation> reservations) {
@@ -72,28 +59,15 @@ public class Room extends java.util.Observable implements Observer {
     }
 
     public boolean addReservation(Reservation reservation){
-        if(reservations.size() == 0){
-            reservations.add(reservation);
-            reservation.addObserver(this);
-            return true;
-        }
-        int reservationCount = 0;
-        for (Reservation reservationCheck : reservations){
-            if (((reservation.getStart().isAfter(reservationCheck.getEnd()) || reservation.getStart().isBefore(reservationCheck.getStart())) && reservation.getEnd().isBefore(reservationCheck.getStart())) || reservation.getStart().isAfter(reservationCheck.getEnd())){
-                reservationCount++;
-            }
-        }
-        if (reservationCount == reservations.size()){
-            reservations.add(reservation);
-            reservation.addObserver(this);
-            reservationCount = 0;
-            return true;
-        }
-        return false;
+        reservations.add(reservation);
+        reservation.setRoom(this);
+        reservation.addObserver(this);
+        return true;
     }
 
     public void removeReservation(Reservation reservation){
         reservation.deleteObserver(this);
+        reservation.setRoom(null);
         reservations.remove(reservation);
     }
 
@@ -112,6 +86,7 @@ public class Room extends java.util.Observable implements Observer {
         return reservationFound;
     }
 
+
     public void roomChanged(Changed changed){
         ChangedObject roomObj = new ChangedObject();
         roomObj.setChanged(changed);
@@ -124,6 +99,7 @@ public class Room extends java.util.Observable implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         setChanged();
+        System.out.println("UHM");
         notifyObservers(arg);
     }
 }

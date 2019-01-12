@@ -37,25 +37,7 @@ class RoomMemoryTest {
         rooms.add(room2);
         rooms.add(room3);
 
-        calender = new Calender() {
-            @Override
-            public void createNewEvent(Reservation reservation) {
-
-            }
-
-            @Override
-            public void updateEvent(Reservation reservation) {
-
-            }
-
-            @Override
-            public List<Room> getRooms() {
-                return rooms;
-            }
-
-            @Override
-            public List<User> getUsers() { return users; }
-        };
+        calender = null;
 
         roomMemory = new RoomMemory(calender);
     }

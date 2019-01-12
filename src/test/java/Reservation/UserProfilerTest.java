@@ -28,25 +28,7 @@ class UserProfilerTest {
         users.add(user2);
         users.add(user3);
 
-        calender = new Calender() {
-            @Override
-            public void createNewEvent(Reservation reservation) {
-
-            }
-
-            @Override
-            public void updateEvent(Reservation reservation) {
-
-            }
-
-            @Override
-            public List<Room> getRooms() {
-                return rooms;
-            }
-
-            @Override
-            public List<User> getUsers() { return users; }
-        };
+        calender = null;
 
         userProfiler = new UserProfiler(calender);
     }

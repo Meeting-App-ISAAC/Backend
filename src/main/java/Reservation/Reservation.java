@@ -5,23 +5,73 @@ import java.util.Observable;
 
 public class Reservation extends Observable {
 
+    private Room room;
     private int id;
-    private User user;
+
+    private String calId;
+
+    public String getCalId() {
+        return calId;
+    }
+
+    public void setCalId(String calid) {
+        calId = calid;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    private String title;
+
+    private String userEmail;
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
     private Boolean hasStarted;
 
+    private String uuid;
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
     private LocalDateTime start;
     private LocalDateTime end;
 
     public Reservation(User user,LocalDateTime start,LocalDateTime end) {
-        this.user = user;
+        this.start = start;
+        this.end = end;
+        this.title = user.getName();
+        this.userEmail = user.getEmail();
+    }
+
+    public Reservation(int id, String email, String name, boolean hasStarted, LocalDateTime start, LocalDateTime end){
+        this.id = id;
+        this.title = name;
+        this.userEmail = email;
+        this.hasStarted = hasStarted;
         this.start = start;
         this.end = end;
     }
-
     public Reservation(int id, User user, boolean hasStarted, LocalDateTime start, LocalDateTime end){
         this.id = id;
-        this.user = user;
+        this.userEmail = user.getEmail();
+        this.title = user.getName();
         this.hasStarted = hasStarted;
         this.start = start;
         this.end = end;
@@ -33,14 +83,6 @@ public class Reservation extends Observable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public LocalDateTime getStart() {
@@ -63,6 +105,8 @@ public class Reservation extends Observable {
         return hasStarted;
     }
 
+
+
     public void setHasStarted(Boolean hasStarted) {
         this.hasStarted = hasStarted;
 
@@ -75,5 +119,14 @@ public class Reservation extends Observable {
 
         setChanged();
         notifyObservers(obj);
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+
+        this.room = room;
     }
 }

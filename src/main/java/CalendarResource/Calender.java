@@ -12,8 +12,10 @@ public interface Calender {
      * Creates a new event in the calender
      * @param reservation reservation object
      */
+
     void createNewEvent(Reservation reservation);
 
+    void Reload();
     void updateEvent(Reservation reservation);
 
     List<Room> getRooms();

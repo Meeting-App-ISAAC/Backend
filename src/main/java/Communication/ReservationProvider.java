@@ -2,10 +2,9 @@ package Communication;
 
 import CalendarResource.Calender;
 import CalendarResource.DummyCalender;
-import Reservation.RoomCollection;
-import Reservation.RoomMemory;
-import Reservation.UserCollection;
-import Reservation.UserProfiler;
+import CalendarResource.ExchangeCalendar;
+import Reservation.*;
+import RoomConfiguration.ReadRoomConfig;
 
 public class ReservationProvider {
 
@@ -13,6 +12,7 @@ public class ReservationProvider {
 
     private RoomCollection collection;
     private UserCollection userCollection;
+    private Calender calender;
     private static ReservationProvider reservationProvider = new ReservationProvider();
 
     public static ReservationProvider getInstance(){
@@ -20,11 +20,17 @@ public class ReservationProvider {
     }
 
     private ReservationProvider(){
-        Calender calender = new DummyCalender();
+        calender = new ExchangeCalendar(new ReadRoomConfig());
         this.collection = new RoomMemory(calender);
         this.userCollection = new UserProfiler(calender);
     }
 
+    public void Reload(){
+        calender.Reload();
+    }
+
+    public void addNewEvent(){
+    }
     public RoomCollection getCollection(){
         return this.collection;
     }

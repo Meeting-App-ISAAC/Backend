@@ -20,7 +20,6 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import javax.servlet.DispatcherType;
 import javax.websocket.server.ServerContainer;
 import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -31,49 +30,21 @@ class Server {
     {
 
         // Reservation timeout
-        boolean timerEnabled = true;
-        try {
-            timerEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_TIMEOUT_ENABLED"));
-        }
-        catch (IOException e) {
-            System.out.println("[error] Could not get properties file");
-        }
-        if (timerEnabled) {
-            Timer timer = new Timer();
-            timer.schedule(new ReservationTimer(), 0, 60000);
-        }
+        setReservationTimeout();
 
         // Resend settings on change of config file
-        boolean resendOnChange = true;
-        try {
-            resendOnChange = Boolean.parseBoolean(SettingsHandler.getProperty("RESEND_ON_CONFIG_CHANGE"));
-        }
-        catch (IOException e) {
-            System.out.println("[error] Could not get properties file");
-        }
-        if (resendOnChange) {
-            Timer timer = new Timer();
-            timer.schedule(new SettingsWatcher(new File("target/classes/config.properties")),0,1000);
-        }
-
-        // Broadcast reservations on new day
-        Timer timer = new Timer();
-        timer.schedule(new UtilTimerTask(LocalDateTime.now()),0,60000);
+        setResendOnChange();
 
         org.eclipse.jetty.server.Server server = new org.eclipse.jetty.server.Server();
         ServerConnector connector = new ServerConnector(server);
-        try {
-            connector.setPort(Integer.parseInt(SettingsHandler.getProperty("SERVER_PORT")));
-        }
-        catch (IOException e) {
-            System.out.println("[error] Could not get properties file");
-            connector.setPort(8090);
-        }
-        server.addConnector(connector);
+        ServerConnector connectorWithPort = setServerPort(connector);
+        server.addConnector(connectorWithPort);
 
         Gson gson = new Gson();
         String test = gson.toJson(LocalDateTime.now());
         System.out.println(test);
+
+        System.out.println("[info] Starting server...");
 
         // Setup the basic application "context" for this application at "/"
         // This is also known as the handler tree (in jetty speak)
@@ -118,5 +89,49 @@ class Server {
         {
             t.printStackTrace(System.err);
         }
+    }
+    private static void setReservationTimeout() {
+        // Reservation timeout
+        System.out.println("[info] Setting reservation timeout...");
+        boolean timerEnabled = true;
+        try {
+            timerEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_TIMEOUT_ENABLED"));
+        }
+        catch (Exception e) {
+            noPropertiesError();
+        }
+        if (timerEnabled) {
+            Timer timer = new Timer();
+            timer.schedule(new ReservationTimer(), 0, 6000);
+        }
+        System.out.println("[info] Done!");
+    }
+    private static void setResendOnChange() {
+        // Resend settings on change of config file
+        System.out.println("[info] Setting resend on change...");
+        boolean resendOnChange = true;
+        try {
+            resendOnChange = Boolean.parseBoolean(SettingsHandler.getProperty("RESEND_ON_CONFIG_CHANGE"));
+        }
+        catch (Exception e) {
+            noPropertiesError();
+        }
+        System.out.println("[info] Done!");
+    }
+    private static ServerConnector setServerPort(ServerConnector connector) {
+        System.out.println("[info] Setting server port...");
+        try {
+            connector.setPort(Integer.parseInt(SettingsHandler.getProperty("SERVER_PORT")));
+        }
+        catch (Exception e) {
+            noPropertiesError();
+        }
+        System.out.println("[info] Done!");
+        return connector;
+    }
+    private static void noPropertiesError() {
+        // Properties file could not be found, return error and exit application with code 1
+        System.out.println("[error] Could not get properties file");
+        System.exit(1);
     }
 }
