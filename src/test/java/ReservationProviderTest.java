@@ -1,5 +1,3 @@
-package Communication;
-
 import CalendarResource.Calender;
 import CalendarResource.DummyCalender;
 import Reservation.RoomCollection;
