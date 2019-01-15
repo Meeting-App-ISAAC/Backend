@@ -1,1 +1,26 @@
-[{"secret":"XjmVM566tQ3YK5Tf9jgfHQmerlFTDHdY8FLRDR5YEaR9ELUZtMJ6Fm2ig5gRmOQyOixdc7KHAj5lBGJwlTKYfgOJ1EiomWPWR3AL","id":1, "email": "fontysroom2@isaacfontys.onmicrosoft.com", "capacity":0,"name":"fontysroom2","location":"3th floor"},{ "email": "fontysroom1@isaacfontys.onmicrosoft.com", "secret":"g1JNH00pbUK5tlqn0NJVQJTBiBBiQ6mCfzpyok9Ey1rfGDBdSWyNAnhV0PILIQLtMWCfYDW7Kp8XiLqlceQO5eJ9sPSmV0i1ATlp","id":2,"capacity":20,"name":"fontysroom1","location":"4th floor"}]
+[
+   {
+      "secret":"sensei!",
+      "id":1,
+      "email":"sensei@isaacfontys.onmicrosoft.com",
+      "capacity":5,
+      "name":"Sensei",
+      "location":"R.43"
+   },
+   {
+      "secret":"kungfu!",
+      "id":2,
+      "email":"kungfu@isaacfontys.onmicrosoft.com",
+      "capacity":11,
+      "name":"Kung Fu",
+      "location":"R.41"
+   },
+   {
+      "secret":"safehouse!",
+      "id":3,
+      "email":"safehouse@isaacfontys.onmicrosoft.com",
+      "capacity":11,
+      "name":"Safe House",
+      "location":"Unknown"
+   }
+]
