@@ -424,7 +424,7 @@ public class ExchangeCalendar implements Calender {
 
     private  void waitAndReload(){
         try {
-            Thread.sleep(3000);
+            Thread.sleep(4000);
             Reload();
 
         } catch (InterruptedException e) {
