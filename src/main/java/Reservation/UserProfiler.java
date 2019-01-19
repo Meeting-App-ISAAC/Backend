@@ -8,21 +8,19 @@ import java.util.List;
 public class UserProfiler implements UserCollection {
 
     private Calender calender;
-    private List<User> users = new ArrayList<>();
 
     public UserProfiler(Calender calender){
         this.calender = calender;
-        users = calender.getUsers();
     }
 
     @Override
     public List<User> getUsers() {
-        return users;
+        return calender.getUsers();
     }
 
     @Override
     public User getUserById(int id) {
-        for (User user : users){
+        for (User user : calender.getUsers()){
             if (user.getId() == id){
                 return user;
             }

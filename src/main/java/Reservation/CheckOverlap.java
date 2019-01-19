@@ -30,6 +30,7 @@ public class CheckOverlap {
                 }
                 reservation.setEnd(reservation.getEnd().plusMinutes(extensionMinutes));
                 reservation.Changed(changed);
+                return false;
             }
         }
 

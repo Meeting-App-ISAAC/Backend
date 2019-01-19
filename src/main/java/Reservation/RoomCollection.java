@@ -14,4 +14,6 @@ public interface RoomCollection {
      * Get a list of all rooms
      */
     List<Room> getAllRooms();
+
+    boolean addNewReservation(Room room, Reservation reservation);
 }

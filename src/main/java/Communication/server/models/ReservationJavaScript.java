@@ -4,7 +4,11 @@ import Reservation.Reservation;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class ReservationJavaScript {
 
@@ -70,12 +74,27 @@ public class ReservationJavaScript {
                     .toInstant().toEpochMilli()) / 3600) / 1000;
             temp.hasStarted = reservation.getHasStarted();
 
+
+            temp.startHour = (double) reservation.getStart().getHour() + (double) reservation.getStart().getMinute() / 60 + (double) reservation.getStart().getSecond() / 3600;
             if(reservation.getStart().getYear() != LocalDateTime.now().getYear() ||
-            reservation.getStart().getDayOfYear() != LocalDateTime.now().getDayOfYear()) {
+                    reservation.getStart().getDayOfYear() != LocalDateTime.now().getDayOfYear()) {
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.set(Calendar.HOUR_OF_DAY, 0);
+
+
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MILLISECOND, 0);
+
+                ZonedDateTime dateNow = ZonedDateTime.ofInstant(cal.toInstant(), ZoneId.systemDefault());
+
+
+
+                temp.length = (double) Math.round((double) (reservation.getEnd().atZone(ZoneId.systemDefault())
+                        .toInstant().toEpochMilli() - dateNow.toInstant().toEpochMilli()) / 3600) / 1000;
                 temp.startHour = 0;
-            }
-            else {
-                temp.startHour = (double) reservation.getStart().getHour() + (double) reservation.getStart().getMinute() / 60 + (double) reservation.getStart().getSecond() / 3600;
             }
 
             result.add(temp);

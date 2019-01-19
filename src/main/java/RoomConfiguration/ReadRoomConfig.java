@@ -1,6 +1,7 @@
 package RoomConfiguration;
 
 
+import AdminConfiguration.ReadAdminConfig;
 import com.google.gson.Gson;
 
 
@@ -44,11 +45,24 @@ public class ReadRoomConfig implements RoomConfig {
         if(cached != null){
             return cached;
         }
-        InputStream in = getClass().getResourceAsStream("/roomdata.txt");
+        InputStream in = getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         cached = reader.lines().collect(Collectors.joining());
         return cached;
     }
+
+    InputStream getInputStream(){
+        String path = "./roomdata.txt";
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(path);
+            return fis;
+        } catch (FileNotFoundException e) {
+            return ReadRoomConfig.class.getClassLoader().getResourceAsStream("roomdata.txt");
+        }
+
+    }
+
 
     public void SaveRoomData(ArrayList<RoomDataModel> roomData) {
 

@@ -2,16 +2,27 @@ package AdminConfiguration;
 
 import AdminConfiguration.models.ClientConfigModel;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Properties;
 
 public class ReadClientConfig implements IClientConfig{
 
+
+    InputStream getInputStream(){
+        String path = "./auth.properties";
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(path);
+            return fis;
+        } catch (FileNotFoundException e) {
+            return ReadClientConfig.class.getClassLoader().getResourceAsStream("auth.properties");
+        }
+
+    }
+
+
     public ClientConfigModel getClientConfig(){
-        String authConfigFile = "auth.properties";
-        InputStream authConfigStream = ReadClientConfig.class.getClassLoader().getResourceAsStream(authConfigFile);
+        InputStream authConfigStream = getInputStream();
 
         if (authConfigStream != null) {
             Properties authProps = new Properties();
@@ -21,6 +32,8 @@ public class ReadClientConfig implements IClientConfig{
                 clientConfigModel.setClientId(authProps.getProperty("clientId"));
                 clientConfigModel.setClientSecret(authProps.getProperty("clientSecret"));
                 clientConfigModel.setTenantId(authProps.getProperty("tenantId"));
+
+                System.err.println(clientConfigModel.getTenantId());
                 return clientConfigModel;
             } catch (IOException e) {
                 e.printStackTrace();

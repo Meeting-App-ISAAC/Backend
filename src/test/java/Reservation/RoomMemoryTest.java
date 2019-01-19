@@ -42,7 +42,7 @@ class RoomMemoryTest {
         roomMemory = new RoomMemory(calender);
     }
 
-    @Test
+    /*@Test
     void getRoom() {
 
         // Assert if roomMemory returns the room
@@ -64,9 +64,5 @@ class RoomMemoryTest {
     @Test
     void calenderRoomsSize() {
         Assert.assertEquals(rooms.size(), calender.getRooms().size());
-    }
-
-    @Test
-    void update() {
-    }
+    }*/
 }

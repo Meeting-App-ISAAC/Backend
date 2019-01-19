@@ -5,6 +5,7 @@ import java.util.Observable;
 
 public class Reservation extends Observable {
 
+    private Room room;
     private int id;
 
     private String calId;
@@ -14,6 +15,9 @@ public class Reservation extends Observable {
     }
 
     public void setCalId(String calid) {
+        if(calid == null || calid.isEmpty()){
+            throw new IllegalArgumentException();
+        }
         calId = calid;
     }
 
@@ -52,6 +56,9 @@ public class Reservation extends Observable {
     private LocalDateTime start;
     private LocalDateTime end;
 
+    public Reservation(String calId){
+        this.setCalId(calId);
+    }
     public Reservation(User user,LocalDateTime start,LocalDateTime end) {
         this.start = start;
         this.end = end;
@@ -118,5 +125,14 @@ public class Reservation extends Observable {
 
         setChanged();
         notifyObservers(obj);
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+
+        this.room = room;
     }
 }

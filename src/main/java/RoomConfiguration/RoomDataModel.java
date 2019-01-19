@@ -1,6 +1,10 @@
 package RoomConfiguration;
 
+import java.util.ArrayList;
+
 public class RoomDataModel {
+
+
     private String secret;
     private int id;
     private String email;
@@ -10,6 +14,15 @@ public class RoomDataModel {
 
     public String getEmail() {
         return email;
+    }
+
+    public static int getRoomIdByEmail(String email, ArrayList<RoomDataModel> config) {
+        for (RoomDataModel roomDataModel : config) {
+            if (roomDataModel.getEmail() != null && roomDataModel.getEmail().equals(email)) {
+                return roomDataModel.getId();
+            }
+        }
+        return -1;
     }
 
     public void setEmail(String email) {
