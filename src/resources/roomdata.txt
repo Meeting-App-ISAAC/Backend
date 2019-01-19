@@ -1,6 +1,6 @@
 [
    {
-      "secret":"sensei!",
+      "secret":"sensesi!",
       "id":1,
       "email":"sensei@isaacfontys.onmicrosoft.com",
       "capacity":5,

@@ -24,6 +24,11 @@ public class DummyCalender implements Calender {
     }
 
     @Override
+    public void Reset() {
+
+    }
+
+    @Override
     public void updateEvent(Reservation reservation){
         System.out.println(reservation.getEnd());
     }

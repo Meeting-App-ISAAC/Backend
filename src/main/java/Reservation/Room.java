@@ -1,5 +1,7 @@
 package Reservation;
 
+import RoomConfiguration.RoomDataModel;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -13,7 +15,16 @@ public class Room extends java.util.Observable implements Observer {
     private ArrayList<Reservation> reservations = new ArrayList<Reservation>();
 
 
-   
+    public static Room SearchRoomById(int id, ArrayList<Room> rooms) {
+        for (Room room : rooms) {
+            if (room.getId() == id) {
+                return room;
+            }
+        }
+        return null;
+    }
+
+
     public Room(){
 
     }

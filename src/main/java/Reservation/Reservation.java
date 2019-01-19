@@ -15,6 +15,9 @@ public class Reservation extends Observable {
     }
 
     public void setCalId(String calid) {
+        if(calid == null || calid.isEmpty()){
+            throw new IllegalArgumentException();
+        }
         calId = calid;
     }
 
@@ -53,6 +56,9 @@ public class Reservation extends Observable {
     private LocalDateTime start;
     private LocalDateTime end;
 
+    public Reservation(String calId){
+        this.setCalId(calId);
+    }
     public Reservation(User user,LocalDateTime start,LocalDateTime end) {
         this.start = start;
         this.end = end;
