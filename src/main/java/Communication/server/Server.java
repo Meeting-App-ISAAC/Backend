@@ -91,20 +91,10 @@ class Server {
         }
     }
     private static void setReservationTimeout() {
-        // Reservation timeout
-        System.out.println("[info] Setting reservation timeout...");
-        boolean timerEnabled = true;
-        try {
-            timerEnabled = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_TIMEOUT_ENABLED"));
-        }
-        catch (Exception e) {
-            noPropertiesError();
-        }
-        if (timerEnabled) {
-            Timer timer = new Timer();
-            timer.schedule(new ReservationTimer(), 0, 6000);
-        }
-        System.out.println("[info] Done!");
+
+        Timer timer = new Timer();
+        timer.schedule(new ReservationTimer(), 0, 6000);
+
     }
     private static void setResendOnChange() {
         // Resend settings on change of config file

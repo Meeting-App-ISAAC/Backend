@@ -21,11 +21,13 @@ class ReservationTimer extends TimerTask {
 
     // Sets the amount of minutes before a reservation is considered expired
     private long expiryTime = 10;
+    private boolean check;
 
     ReservationTimer() {
         reservations = new ArrayList<Reservation>();
         try {
             expiryTime = Long.parseLong(SettingsHandler.getProperty("RESERVATION_TIMEOUT"));
+            check = Boolean.parseBoolean(SettingsHandler.getProperty("RESERVATION_TIMEOUT_ENABLED"));
         }
         catch (IOException e) {
             System.out.println("[error] Could not get properties file");
@@ -33,15 +35,19 @@ class ReservationTimer extends TimerTask {
     }
 
     public void run() {
+        System.out.println("[info] Requesting Exchange delta...");
         refreshReservations();
-        System.out.println("[info] Checking for expired reservations...");
-        for(Reservation r : reservations) {
-            if(r.getStart().isBefore(LocalDateTime.now()) && !r.getHasStarted()
-            && LocalDateTime.now().isAfter(r.getStart().plusMinutes(expiryTime))) {
-                r.setHasStarted(true);
-                r.setEnd(LocalDateTime.now());
-                r.Changed(Changed.StartedMeeting);
-                System.out.println("[info] Reservation with id " + r.getId() + " was expired");
+
+        if(check) {
+            System.out.println("[info] Checking for expired reservations...");
+            for (Reservation r : reservations) {
+                if (r.getStart().isBefore(LocalDateTime.now()) && !r.getHasStarted()
+                        && LocalDateTime.now().isAfter(r.getStart().plusMinutes(expiryTime))) {
+                    r.setHasStarted(true);
+                    r.setEnd(LocalDateTime.now());
+                    r.Changed(Changed.StartedMeeting);
+                    System.out.println("[info] Reservation with id " + r.getId() + " was expired");
+                }
             }
         }
     }
